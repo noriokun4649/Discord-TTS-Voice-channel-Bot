@@ -19,7 +19,7 @@ let mode_list = {
 
 let voice_patan_1 = 'hikari'; //初期時のよみあげ音声
 
-let mode = 2;
+let mode = 1;
 
 const client = new Discord.Client();
 
