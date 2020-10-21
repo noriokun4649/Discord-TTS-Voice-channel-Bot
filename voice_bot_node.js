@@ -1,6 +1,6 @@
 const Discord = require('discord.js');
 const { VoiceText } = require('voice-text');
-const { writeFileSync } = require('fs');
+const { Readable } = require('stream');
 
 
 let conext;
@@ -176,8 +176,7 @@ client.on('message', message => {
 
     function yomiage(obj) {
         mode_api(obj).then((buffer) => {
-            writeFileSync('voice.wav', buffer);
-            obj.cons.play("./voice.wav"); //保存されたWAV再生
+            obj.cons.play(bufferToStream(buffer)); //保存されたWAV再生
             console.log(obj.msg + 'の読み上げ完了');
         }).catch((error) => {
             console.log('error ->');
@@ -195,4 +194,11 @@ client.on('message', message => {
         }
         return buffer_obj;
     }
+
+    function bufferToStream(buffer) { 
+        var stream = new Readable();
+        stream.push(buffer);
+        stream.push(null);
+        return stream;
+      }
 });
