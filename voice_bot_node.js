@@ -104,7 +104,7 @@ client.on('message', message => {
                 })
             } else {
                 mode = mode_type[1];
-                message.reply("指定された読み上げ音声タイプが不正です。指定可能な音声タイプは/typeで見ることが可能です。");
+                message.reply("指定されたAPIが不正です。指定可能なAPIは/modeで見ることが可能です。");
             }
         } else {
             let mode_names = "\n以下のAPIに切り替え可能です。 指定時の例：/mode 1\n";
