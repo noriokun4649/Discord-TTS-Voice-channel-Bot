@@ -15,7 +15,6 @@
     "@discordjs/opus": "^0.3.2",
     "discord.js": "^12.4.0",
     "ffmpeg-static": "^4.2.7",
-    "fs": "0.0.1-security",
     "voice-text": "^0.1.2"
   }
 }
