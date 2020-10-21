@@ -195,7 +195,7 @@ client.on('message', message => {
     }
 
     function bufferToStream(buffer) { 
-        var stream = new Readable();
+        let stream = new Readable();
         stream.push(buffer);
         stream.push(null);
         return stream;
