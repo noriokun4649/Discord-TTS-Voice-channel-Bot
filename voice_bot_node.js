@@ -175,7 +175,7 @@ client.on('message', message => {
 
     function emoji_delete(str){
         let pat = /(<\:\w*\:\d*>)/g;
-        let return_val = return_val.replace(pat, "");
+        let return_val = str.replace(pat, "");
         return return_val;
     }
     
