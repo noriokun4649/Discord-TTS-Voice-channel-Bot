@@ -168,9 +168,8 @@ client.on('message', message => {
     }
 
     function url_delete(str) {
-        var pat = /(https?:\/\/[\x21-\x7e]+)/g;
-        var patan = str.match(pat);
-        var return_val = str.replace(patan, " URL省略。");
+        let pat = /(https?:\/\/[\x21-\x7e]+)/g;
+        let return_val = str.replace(pat, " URL省略。");
         return return_val;
     }
 
