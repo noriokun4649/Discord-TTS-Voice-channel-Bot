@@ -37,6 +37,12 @@ process.on('uncaughtException', function (err) {
 
 });
 
+process.on('unhandledRejection', error => {
+    console.error(error.name);
+    console.error(error.message);
+    console.error(error.code);
+});
+
 client.on('ready', () => {
     console.log("Bot準備完了");
 });
