@@ -186,7 +186,7 @@ client.on('message', message => {
         }).catch((error) => {
             console.log('error ->');
             console.error(error);
-            message.channel.send(error, { code: true });
+            message.channel.send(mode_list[mode]+"の呼び出しにエラーが発生しました。\nエラー内容:"+error.details[0].message, { code: true });
         });
     }
 
