@@ -192,7 +192,6 @@ client.on('message', message => {
             buffer_obj = voiceText.fetchBuffer(obj.msg, { format: 'wav', speaker: voice_patan_1 });
         } else {
             throw Error("不明なAPIが選択されています:" + mode);
-            console.log("ERRR");
         }
         return buffer_obj;
     }
