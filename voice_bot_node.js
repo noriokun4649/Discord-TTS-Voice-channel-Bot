@@ -153,7 +153,7 @@ client.on('message', message => {
         if (conext) {
             try {
                 yomiage({
-                    msg: url_delete(message.content + "。"),
+                    msg: emoji_delete(url_delete(message.content + "。")),
                     cons: conext
                 })
             } catch (err) {
@@ -173,6 +173,12 @@ client.on('message', message => {
         return return_val;
     }
 
+    function emoji_delete(str){
+        let pat = /(<\:\w*\:\d*>)/g;
+        let return_val = return_val.replace(pat, "");
+        return return_val;
+    }
+    
     function yomiage(obj) {
         mode_api(obj).then((buffer) => {
             obj.cons.play(bufferToStream(buffer)); //保存されたWAV再生
