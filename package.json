@@ -1,0 +1,21 @@
+{
+  "name": "Discord-TTS-Voice-Channel-bot",
+  "description": "voice channel bot",
+  "license": "MIT",
+  "version": "1.0.0",
+  "main": "voice_bot_node.js",
+  "scripts": {
+    "start": "node voice_bot_node.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/noriokun4649/Discord-TTS-Voice-channel-Bot.git"
+  },
+  "dependencies": {
+    "@discordjs/opus": "^0.3.2",
+    "discord.js": "^12.4.0",
+    "ffmpeg-static": "^4.2.7",
+    "fs": "0.0.1-security",
+    "voice-text": "^0.1.2"
+  }
+}
