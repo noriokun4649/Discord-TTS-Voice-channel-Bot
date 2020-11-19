@@ -6,8 +6,8 @@ let config = conf();
 
 let discordToken = null;
 let voiceTextApiKey = null;
-let prefix;
-let readMe;
+let prefix = "/";
+let readMe = false;
 let apiType = 1;
 let voiceType = "haruka";
 let blackList;
@@ -74,14 +74,16 @@ client.on('message', message => {
     // we ignore it
     if (!message.guild) return;
 
-    if (message.content === '/join') {
+    if (message.content === prefix + 'join') {
         // Only try to join the sender's voice channel if they are in one themselves
         if (message.member.voice.channel) {
             message.member.voice.channel.join()
                 .then(connection => { // Connection is an instance of VoiceConnection
                     console.log("ボイスチャンネルへ接続しました。");
                     message.channel.send('ボイスチャンネルへ接続しました。', {code: true});
-                    message.reply("\nチャットの読み上げ準備ができました。切断時は/killです。\n/mode で読み上げAPIを変更できます。\n /voiceでよみあげ音声を選択できます。\n 音声が読み上げられない場合は/reconnectを試してみてください。");
+                    message.reply("\nチャットの読み上げ準備ができました。切断時は" + prefix + "killです。\n" +
+                        prefix + "mode で読み上げAPIを変更できます。\n " + prefix +
+                        "voiceでよみあげ音声を選択できます。\n 音声が読み上げられない場合は" + prefix + "reconnectを試してみてください。");
                     conext = connection;
                 })
                 .catch(err => console.log(err));
@@ -90,7 +92,7 @@ client.on('message', message => {
         }
     }
 
-    if (message.content === '/reconnect') {
+    if (message.content === prefix + 'reconnect') {
         if (conext) {
             conext.disconnect();
             if (message.member.voice.channel) {
@@ -108,12 +110,12 @@ client.on('message', message => {
             message.reply("Botがボイスチャンネルへ接続してません。");
         }
     }
-    if (message.content === '/kill') {
+    if (message.content === prefix + 'kill') {
         message.channel.send(':dash:');
         conext.disconnect();
     }
 
-    if (message.content.indexOf('/mode') === 0) {
+    if (message.content.indexOf(prefix + 'mode') === 0) {
         let mode_type = message.content.split(' ');
         if (1 < mode_type.length) {
             if (mode_list[mode_type[1]] != null) {
@@ -126,10 +128,10 @@ client.on('message', message => {
                 })
             } else {
                 mode = Number(mode_type[1]);
-                message.reply("指定されたAPIが不正です。指定可能なAPIは/modeで見ることが可能です。");
+                message.reply("指定されたAPIが不正です。指定可能なAPIは" + prefix + "modeで見ることが可能です。");
             }
         } else {
-            let mode_names = "\n以下のAPIに切り替え可能です。 指定時の例：/mode 1\n";
+            let mode_names = "\n以下のAPIに切り替え可能です。 指定時の例：" + prefix + "mode 1\n";
             for (indexs in mode_list) {
                 mode_names = mode_names + indexs + " -> " + mode_list[indexs] + "\n";
             }
@@ -138,7 +140,7 @@ client.on('message', message => {
 
     }
 
-    if (message.content === '/type') {
+    if (message.content === prefix + 'type') {
         let outputs = "\n音声タイプ -> その説明\n";
         if (mode === 1) {
             for (outdata in voice_lists_1) {
@@ -150,7 +152,7 @@ client.on('message', message => {
         message.reply(outputs);
     }
 
-    if (message.content.indexOf('/voice') === 0) {
+    if (message.content.indexOf(prefix + 'voice') === 0) {
         let vo = message.content.split(' ');
         if (mode === 1) {
             if (1 < vo.length) {
@@ -163,15 +165,15 @@ client.on('message', message => {
                         cons: conext
                     });
                 } else {
-                    message.reply("指定された読み上げ音声タイプが不正です。指定可能な音声タイプは/typeで見ることが可能です。");
+                    message.reply("指定された読み上げ音声タイプが不正です。指定可能な音声タイプは" + prefix + "typeで見ることが可能です。");
                 }
             } else {
-                message.reply("読み上げ音声タイプを指定する必要があります。例：/voice hikari 指定可能な音声タイプは/typeで見ることが可能です。");
+                message.reply("読み上げ音声タイプを指定する必要があります。例：" + prefix + "voice hikari 指定可能な音声タイプは" + prefix + "typeで見ることが可能です。");
             }
         }
     }
 
-    if (message.content === '/reload') {
+    if (message.content === prefix + 'reload') {
         config = conf.reloadConfigs();
         if (readConfig()) message.channel.send("コンフィグを再読み込みしました。");
     }
