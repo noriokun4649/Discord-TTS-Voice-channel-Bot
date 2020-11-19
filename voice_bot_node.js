@@ -1,7 +1,28 @@
 const Discord = require('discord.js');
 const { VoiceText } = require('voice-text');
 const { Readable } = require('stream');
+const config = require('config');
 
+let discordToken;
+let voiceTextApiKey;
+let prefix;
+let readMe;
+let apiType;
+let voiceType;
+let blackList;
+
+function readConfig(){
+    discordToken = config.get('Api.discordToken');
+    voiceTextApiKey = config.get('Api.voiceTextApiKey');
+    prefix = config.get('Prefix');
+    readMe = config.get('ReadMe');
+    apiType = config.get('Defalut.apiType');
+    voiceType = config.get('Defalut.voiceType');
+    blackList = config.get('BlackLists');
+    return true;
+}
+
+if (!readConfig()) throw new Error("Config load error!");
 
 let conext;
 let voice_lists_1 = {
@@ -17,15 +38,15 @@ let mode_list = {
     1: 'HOYA VoiceText API'
 }
 
-let voice_patan_1 = 'hikari'; //初期時のよみあげ音声
+let voice_patan_1 = voiceType; //初期時のよみあげ音声
 
-let mode = 1;
+let mode = apiType;
 
 const client = new Discord.Client();
 
-const voiceText = new VoiceText('xxxxxxxxxxxxxxxxx'); //Voice Text API key
+const voiceText = new VoiceText(voiceTextApiKey); //Voice Text API key
 
-client.login('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'); //Discord login token
+client.login(discordToken); //Discord login token
 
 process.on('uncaughtException', function (err) {
     console.error(err);
