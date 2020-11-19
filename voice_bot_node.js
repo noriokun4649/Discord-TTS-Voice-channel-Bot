@@ -1,7 +1,8 @@
 const Discord = require('discord.js');
 const { VoiceText } = require('voice-text');
 const { Readable } = require('stream');
-const config = require('config');
+const conf = require('config-reloadable');
+let config = conf();
 
 let discordToken;
 let voiceTextApiKey;
@@ -168,6 +169,11 @@ client.on('message', message => {
                 message.reply("読み上げ音声タイプを指定する必要があります。例：/voice hikari 指定可能な音声タイプは/typeで見ることが可能です。");
             }
         }
+    }
+
+    if (message.content === '/reload') {
+        config = conf.reloadConfigs();
+        if (readConfig()) message.channel.send("コンフィグを再読み込みしました。");
     }
 
     if (!(isBlackListsFromID(message.member.id) || isBlackListsFromPrefixes(message.content)) && isRead(message.member.id)) {
