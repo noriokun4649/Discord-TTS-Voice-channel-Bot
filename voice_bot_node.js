@@ -3,7 +3,19 @@ const {VoiceText} = require('voice-text');
 const {Readable} = require('stream');
 const conf = require('config-reloadable');
 let config = conf();
+let voice_lists_1 = {
+    hikari: 'ひかり（女性）',
+    haruka: 'はるか（女性）',
+    takeru: 'たける（男性）',
+    santa: 'サンタ',
+    bear: '凶暴なクマ',
+    show: 'ショウ（男性）'
+};
 
+let mode_list = {
+    1: 'HOYA VoiceText API'
+};
+let conext;
 let discordToken = null;
 let voiceTextApiKey = null;
 let prefix = "/";
@@ -17,27 +29,17 @@ function readConfig() {
     voiceTextApiKey = config.get('Api.voiceTextApiKey');
     prefix = config.get('Prefix');
     readMe = config.get('ReadMe');
+    if (typeof readMe !== 'boolean') throw new Error("Require a boolean type.");
     apiType = config.get('Defalut.apiType');
+    if (!mode_list[apiType]) throw new Error("Unknown api.");
     voiceType = config.get('Defalut.voiceType');
+    if (!voice_lists_1[voiceType]) throw new Error("Unknown voice.");
     blackList = config.get('BlackLists');
     return true;
 }
 
-if (!readConfig()) throw new Error("Config load error!");
+readConfig();
 
-let conext;
-let voice_lists_1 = {
-    hikari: 'ひかり（女性）',
-    haruka: 'はるか（女性）',
-    takeru: 'たける（男性）',
-    santa: 'サンタ',
-    bear: '凶暴なクマ',
-    show: 'ショウ（男性）'
-};
-
-let mode_list = {
-    1: 'HOYA VoiceText API'
-}
 
 let voice_patan_1 = voiceType; //初期時のよみあげ音声
 
