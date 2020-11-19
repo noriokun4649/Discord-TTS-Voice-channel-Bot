@@ -170,7 +170,7 @@ client.on('message', message => {
         }
     }
 
-    if (!((message.content.indexOf('!') == 0) || (message.content.indexOf('/') == 0)) && (message.member.id != 381054450451742720) && (message.member.id !== client.user.id)) {
+    if (!(isBlackListsFromID(message.member.id) || isBlackListsFromPrefixes(message.content)) && isRead(message.member.id)) {
         if (conext) {
             try {
                 yomiage({
@@ -186,6 +186,24 @@ client.on('message', message => {
         }
     } else {
         console.log("読み上げ対象外のチャットです");
+    }
+
+    function isBlackListsFromPrefixes(cont) {
+        let prefixes = blackList.get("prefixes");
+        return prefixes.find(function (prefix) {
+            return cont.indexOf(prefix) === 0;
+        });
+    }
+
+    function isBlackListsFromID(menId) {
+        let memberIds = blackList.get("memberIds");
+        return memberIds.find(function (id) {
+            return menId === id;
+        });
+    }
+
+    function isRead(id) {
+        return readMe === false ? id !== client.user.id : readMe;
     }
 
     function url_delete(str) {
