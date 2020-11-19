@@ -180,7 +180,7 @@ client.on('message', message => {
         if (conext) {
             try {
                 yomiage({
-                    msg: emoji_delete(url_delete(message.content + "。")),
+                    msg: mention_replace(emoji_delete(url_delete(message.content + "。"))),
                     cons: conext
                 })
             } catch (err) {
@@ -222,6 +222,13 @@ client.on('message', message => {
         let pat = /(<\:\w*\:\d*>)/g;
         let return_val = str.replace(pat, "");
         return return_val;
+    }
+
+    function mention_replace(str) {
+        let pat = /<\@\!(\d*)>/g;
+        let [ match_val ]= str.matchAll(pat);
+        if(match_val === undefined) return str;
+        return str.replace(pat, client.users.resolve(match_val[1]).username);
     }
     
     function yomiage(obj) {
