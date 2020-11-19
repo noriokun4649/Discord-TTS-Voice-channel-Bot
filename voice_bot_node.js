@@ -1,18 +1,18 @@
 const Discord = require('discord.js');
-const { VoiceText } = require('voice-text');
-const { Readable } = require('stream');
+const {VoiceText} = require('voice-text');
+const {Readable} = require('stream');
 const conf = require('config-reloadable');
 let config = conf();
 
-let discordToken;
-let voiceTextApiKey;
+let discordToken = null;
+let voiceTextApiKey = null;
 let prefix;
 let readMe;
-let apiType;
-let voiceType;
+let apiType = 1;
+let voiceType = "haruka";
 let blackList;
 
-function readConfig(){
+function readConfig() {
     discordToken = config.get('Api.discordToken');
     voiceTextApiKey = config.get('Api.voiceTextApiKey');
     prefix = config.get('Prefix');
@@ -52,7 +52,7 @@ client.login(discordToken); //Discord login token
 process.on('uncaughtException', function (err) {
     console.error(err);
     if (client.status != null) {
-        client.user.send(err, { code: true });
+        client.user.send(err, {code: true});
     } else {
         console.error("NOT CONNECT");
     }
@@ -80,7 +80,7 @@ client.on('message', message => {
             message.member.voice.channel.join()
                 .then(connection => { // Connection is an instance of VoiceConnection
                     console.log("ボイスチャンネルへ接続しました。");
-                    message.channel.send('ボイスチャンネルへ接続しました。', { code: true });
+                    message.channel.send('ボイスチャンネルへ接続しました。', {code: true});
                     message.reply("\nチャットの読み上げ準備ができました。切断時は/killです。\n/mode で読み上げAPIを変更できます。\n /voiceでよみあげ音声を選択できます。\n 音声が読み上げられない場合は/reconnectを試してみてください。");
                     conext = connection;
                 })
@@ -97,7 +97,7 @@ client.on('message', message => {
                 message.member.voice.channel.join()
                     .then(connection => { // Connection is an instance of VoiceConnection
                         console.log("ボイスチャンネルへ再接続しました。");
-                        message.channel.send('ボイスチャンネルへ再接続しました。', { code: true });
+                        message.channel.send('ボイスチャンネルへ再接続しました。', {code: true});
                         conext = connection;
                     })
                     .catch(err => console.log(err));
@@ -113,11 +113,11 @@ client.on('message', message => {
         conext.disconnect();
     }
 
-    if (message.content.indexOf('/mode') == 0) {
+    if (message.content.indexOf('/mode') === 0) {
         let mode_type = message.content.split(' ');
         if (1 < mode_type.length) {
             if (mode_list[mode_type[1]] != null) {
-                mode = mode_type[1];
+                mode = Number(mode_type[1]);
                 let mode_to = "読み上げAPIを" + mode_type[1] + " : " + mode_list[mode_type[1]] + "に設定しました。";
                 message.reply(mode_to);
                 yomiage({
@@ -125,7 +125,7 @@ client.on('message', message => {
                     cons: conext
                 })
             } else {
-                mode = mode_type[1];
+                mode = Number(mode_type[1]);
                 message.reply("指定されたAPIが不正です。指定可能なAPIは/modeで見ることが可能です。");
             }
         } else {
@@ -140,7 +140,7 @@ client.on('message', message => {
 
     if (message.content === '/type') {
         let outputs = "\n音声タイプ -> その説明\n";
-        if (mode == 1) {
+        if (mode === 1) {
             for (outdata in voice_lists_1) {
                 outputs = outputs + outdata + "->" + voice_lists_1[outdata] + "\n";
             }
@@ -150,9 +150,9 @@ client.on('message', message => {
         message.reply(outputs);
     }
 
-    if (message.content.indexOf('/voice') == 0) {
+    if (message.content.indexOf('/voice') === 0) {
         let vo = message.content.split(' ');
-        if (mode == 1) {
+        if (mode === 1) {
             if (1 < vo.length) {
                 if (voice_lists_1[vo[1]] != null) {
                     voice_patan_1 = vo[1];
@@ -185,7 +185,7 @@ client.on('message', message => {
                 })
             } catch (err) {
                 console.log(err.message);
-                message.channel.send(err.message, { code: true });
+                message.channel.send(err.message, {code: true});
             }
         } else {
             console.log("Botがボイスチャンネルへ接続してません。");
@@ -214,23 +214,21 @@ client.on('message', message => {
 
     function url_delete(str) {
         let pat = /(https?:\/\/[\x21-\x7e]+)/g;
-        let return_val = str.replace(pat, " URL省略。");
-        return return_val;
+        return str.replace(pat, " URL省略。");
     }
 
-    function emoji_delete(str){
-        let pat = /(<\:\w*\:\d*>)/g;
-        let return_val = str.replace(pat, "");
-        return return_val;
+    function emoji_delete(str) {
+        let pat = /(<:\w*:\d*>)/g;
+        return str.replace(pat, "");
     }
 
     function mention_replace(str) {
-        let pat = /<\@\!(\d*)>/g;
-        let [ match_val ]= str.matchAll(pat);
-        if(match_val === undefined) return str;
+        let pat = /<@!(\d*)>/g;
+        let [match_val] = str.matchAll(pat);
+        if (match_val === undefined) return str;
         return str.replace(pat, client.users.resolve(match_val[1]).username);
     }
-    
+
     function yomiage(obj) {
         mode_api(obj).then((buffer) => {
             obj.cons.play(bufferToStream(buffer)); //保存されたWAV再生
@@ -238,24 +236,22 @@ client.on('message', message => {
         }).catch((error) => {
             console.log('error ->');
             console.error(error);
-            message.channel.send(mode_list[mode]+"の呼び出しにエラーが発生しました。\nエラー内容:"+error.details[0].message, { code: true });
+            message.channel.send(mode_list[mode] + "の呼び出しにエラーが発生しました。\nエラー内容:" + error.details[0].message, {code: true});
         });
     }
 
     function mode_api(obj) {
-        let buffer_obj;
-        if (mode == 1) {
-            buffer_obj = voiceText.fetchBuffer(obj.msg, { format: 'wav', speaker: voice_patan_1 });
+        if (mode === 1) {
+            return voiceText.fetchBuffer(obj.msg, {format: 'wav', speaker: voice_patan_1});
         } else {
             throw Error("不明なAPIが選択されています:" + mode);
         }
-        return buffer_obj;
     }
 
-    function bufferToStream(buffer) { 
+    function bufferToStream(buffer) {
         let stream = new Readable();
         stream.push(buffer);
         stream.push(null);
         return stream;
-      }
+    }
 });
