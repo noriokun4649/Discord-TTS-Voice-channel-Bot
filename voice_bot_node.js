@@ -26,6 +26,8 @@ let apiType = 1;
 let voiceType = "haruka";
 let blackList;
 let channelHistory;
+let speed = 100;
+let pitch = 100;
 
 function readConfig() {
     discordToken = config.get('Api.discordToken');
@@ -209,6 +211,34 @@ client.on('message', message => {
         if (readConfig()) message.channel.send("コンフィグを再読み込みしました。");
     }
 
+    if (message.content.indexOf(prefix + 'pitch') === 0) {
+        let vo = message.content.split(' ');
+        if (mode === 1) {
+            if (1 < vo.length) {
+                if (vo[1] <= 200 && vo[1] >= 0) {
+                    pitch = Number(vo[1]);
+                    message.channel.send("読み上げ音声の高さを"+vo[1]+"に変更しました。", {code: true});
+                }else{
+                    message.reply("読み上げ音声の高さは 0 ～ 200 の範囲内で設定してください。")
+                }
+            }
+        }
+    }
+
+    if (message.content.indexOf(prefix + 'speed') === 0) {
+        let vo = message.content.split(' ');
+        if (mode === 1) {
+            if (1 < vo.length) {
+                if (vo[1] <= 200 && vo[1] >= 0) {
+                    speed = Number(vo[1]);
+                    message.channel.send("読み上げ音声の速度を"+vo[1]+"に変更しました。", {code: true});
+                }else{
+                    message.reply("読み上げ音声の速度は 0 ～ 200 の範囲内で設定してください")
+                }
+            }
+        }
+    }
+
     if (!(isBlackListsFromID(message.member.id) || isBlackListsFromPrefixes(message.content)) && isRead(message.member.id)) {
         try {
             yomiage({
@@ -275,7 +305,7 @@ client.on('message', message => {
 
     function mode_api(obj) {
         if (mode === 1) {
-            return voiceText.fetchBuffer(obj.msg, {format: 'wav', speaker: voice_patan_1});
+            return voiceText.fetchBuffer(obj.msg, {format: 'wav', speaker: voice_patan_1, pitch: pitch, speed: speed});
         } else {
             throw Error("不明なAPIが選択されています:" + mode);
         }
