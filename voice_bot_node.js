@@ -264,7 +264,7 @@ client.on('message', message => {
     }
 
     function yomiage(obj) {
-        if (obj.cons === 0 && (message.guild.id === conext.channel.guild.id)) {
+        if (obj.cons && obj.cons.status === 0 && (message.guild.id === conext.channel.guild.id)) {
             mode_api(obj).then((buffer) => {
                 obj.cons.play(bufferToStream(buffer)); //保存されたWAV再生
                 console.log(obj.msg + 'の読み上げ完了');
