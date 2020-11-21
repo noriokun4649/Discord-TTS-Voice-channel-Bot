@@ -79,6 +79,7 @@ client.on('message', message => {
     if (message.content === prefix + 'join') {
         // Only try to join the sender's voice channel if they are in one themselves
         if (message.member.voice.channel) {
+            if (conext) conext.disconnect();
             message.member.voice.channel.join()
                 .then(connection => { // Connection is an instance of VoiceConnection
                     console.log("ボイスチャンネルへ接続しました。");
@@ -108,10 +109,9 @@ client.on('message', message => {
             } else {
                 message.reply("まずあなたがボイスチャンネルへ接続している必要があります。");
             }
-        } else {
-            message.reply("Botがボイスチャンネルへ接続してません。");
         }
     }
+
     if (message.content === prefix + 'kill') {
         message.channel.send(':dash:');
         conext.disconnect();
@@ -181,18 +181,14 @@ client.on('message', message => {
     }
 
     if (!(isBlackListsFromID(message.member.id) || isBlackListsFromPrefixes(message.content)) && isRead(message.member.id)) {
-        if (conext) {
-            try {
-                yomiage({
-                    msg: mention_replace(emoji_delete(url_delete(message.content + "。"))),
-                    cons: conext
-                })
-            } catch (err) {
-                console.log(err.message);
-                message.channel.send(err.message, {code: true});
-            }
-        } else {
-            console.log("Botがボイスチャンネルへ接続してません。");
+        try {
+            yomiage({
+                msg: mention_replace(emoji_delete(url_delete(message.content + "。"))),
+                cons: conext
+            })
+        } catch (err) {
+            console.log(err.message);
+            message.channel.send(err.message, {code: true});
         }
     } else {
         console.log("読み上げ対象外のチャットです");
@@ -234,14 +230,18 @@ client.on('message', message => {
     }
 
     function yomiage(obj) {
-        mode_api(obj).then((buffer) => {
-            obj.cons.play(bufferToStream(buffer)); //保存されたWAV再生
-            console.log(obj.msg + 'の読み上げ完了');
-        }).catch((error) => {
-            console.log('error ->');
-            console.error(error);
-            message.channel.send(mode_list[mode] + "の呼び出しにエラーが発生しました。\nエラー内容:" + error.details[0].message, {code: true});
-        });
+        if (obj.cons && (message.guild.id === conext.channel.guild.id)) {
+            mode_api(obj).then((buffer) => {
+                obj.cons.play(bufferToStream(buffer)); //保存されたWAV再生
+                console.log(obj.msg + 'の読み上げ完了');
+            }).catch((error) => {
+                console.log('error ->');
+                console.error(error);
+                message.channel.send(mode_list[mode] + "の呼び出しにエラーが発生しました。\nエラー内容:" + error.details[0].message, {code: true});
+            });
+        } else {
+            console.log("Botがボイスチャンネルへ接続してません。");
+        }
     }
 
     function mode_api(obj) {
