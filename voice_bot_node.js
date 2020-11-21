@@ -2,6 +2,8 @@ const Discord = require('discord.js');
 const {VoiceText} = require('voice-text');
 const {Readable} = require('stream');
 const conf = require('config-reloadable');
+const client = new Discord.Client();
+
 let config = conf();
 let voice_lists_1 = {
     hikari: 'ひかり（女性）',
@@ -11,7 +13,6 @@ let voice_lists_1 = {
     bear: '凶暴なクマ',
     show: 'ショウ（男性）'
 };
-
 let mode_list = {
     1: 'HOYA VoiceText API'
 };
@@ -42,47 +43,29 @@ function readConfig() {
     return true;
 }
 
-readConfig();
-
-
-let voice_patan_1 = voiceType; //初期時のよみあげ音声
-
-let mode = apiType;
-
-const client = new Discord.Client();
-
-const voiceText = new VoiceText(voiceTextApiKey); //Voice Text API key
-
-function discordLogin () {
-    client.login(discordToken); //Discord login token
-    console.log("DiscordBotログイン処理を実行")
-}
-
-discordLogin();
-
-function autoRestartFunc(){
+function autoRestartFunc() {
     console.log("再接続処理開始");
     discordLogin();
     console.log("5秒後にボイスチャンネルへの接続を試行");
     setTimeout(() => {
         if (channelHistory && voiceChanelJoin(channelHistory)) console.log("ボイスチャンネルへ再接続成功");
-    },5000);
+    }, 5000);
 }
 
-function voiceChanelJoin(chanelId){
+function voiceChanelJoin(chanelId) {
     channelHistory = chanelId;
     chanelId.join()
         .then(connection => { // Connection is an instance of VoiceConnection
             conext = connection;
         })
-        .catch(err =>{
+        .catch(err => {
             console.log(err)
             return false
         });
     return true
 }
 
-function onErrorListen(error){
+function onErrorListen(error) {
     if (conext && conext.status !== 4) conext.disconnect();
     client.destroy();
     console.error(error.name);
@@ -96,6 +79,18 @@ function onErrorListen(error){
         if (autoRestart) autoRestartFunc();
     }
 }
+
+function discordLogin() {
+    client.login(discordToken); //Discord login token
+    console.log("DiscordBotログイン処理を実行")
+}
+
+readConfig();
+let voice_patan_1 = voiceType; //初期時のよみあげ音声
+let mode = apiType;
+const voiceText = new VoiceText(voiceTextApiKey); //Voice Text API key
+
+discordLogin();
 
 process.on('uncaughtException', onErrorListen);
 
@@ -114,7 +109,7 @@ client.on('message', message => {
         // Only try to join the sender's voice channel if they are in one themselves
         if (message.member.voice.channel) {
             if (conext && conext.status !== 4) conext.disconnect();
-            if (voiceChanelJoin(message.member.voice.channel)){
+            if (voiceChanelJoin(message.member.voice.channel)) {
                 console.log("ボイスチャンネルへ接続しました。");
                 message.channel.send('ボイスチャンネルへ接続しました。', {code: true});
                 message.reply("\nチャットの読み上げ準備ができました。切断時は" + prefix + "killです。\n" +
@@ -130,14 +125,14 @@ client.on('message', message => {
         if (conext && conext.status !== 4) {
             conext.disconnect();
             if (message.member.voice.channel) {
-                if (voiceChanelJoin(message.member.voice.channel)){
+                if (voiceChanelJoin(message.member.voice.channel)) {
                     console.log("ボイスチャンネルへ再接続しました。");
                     message.channel.send('ボイスチャンネルへ再接続しました。', {code: true});
                 }
             } else {
                 message.reply("まずあなたがボイスチャンネルへ接続している必要があります。");
             }
-        }else{
+        } else {
             message.reply("Botはボイスチャンネルに接続していないようです。");
         }
     }
@@ -146,7 +141,7 @@ client.on('message', message => {
         if (conext && conext.status !== 4) {
             conext.disconnect();
             message.channel.send(':dash:');
-        }else{
+        } else {
             message.reply('Botはボイスチャンネルに接続していないようです。');
         }
     }
