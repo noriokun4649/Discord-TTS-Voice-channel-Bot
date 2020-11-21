@@ -65,7 +65,18 @@ process.on('uncaughtException', err => {
         if (autoRestart) discordLogin();
     }
 
-});
+function voiceChanelJoin(chanelId){
+    channelHistory = chanelId;
+    chanelId.join()
+        .then(connection => { // Connection is an instance of VoiceConnection
+            conext = connection;
+        })
+        .catch(err =>{
+            console.log(err)
+            return false
+        });
+    return true
+}
 
 process.on('unhandledRejection', error => {
     console.error(error.name);
@@ -87,16 +98,13 @@ client.on('message', message => {
         // Only try to join the sender's voice channel if they are in one themselves
         if (message.member.voice.channel) {
             if (conext && conext.status !== 4) conext.disconnect();
-            message.member.voice.channel.join()
-                .then(connection => { // Connection is an instance of VoiceConnection
-                    console.log("ボイスチャンネルへ接続しました。");
-                    message.channel.send('ボイスチャンネルへ接続しました。', {code: true});
-                    message.reply("\nチャットの読み上げ準備ができました。切断時は" + prefix + "killです。\n" +
-                        prefix + "mode で読み上げAPIを変更できます。\n " + prefix +
-                        "voiceでよみあげ音声を選択できます。\n 音声が読み上げられない場合は" + prefix + "reconnectを試してみてください。");
-                    conext = connection;
-                })
-                .catch(err => console.log(err));
+            if (voiceChanelJoin(message.member.voice.channel)){
+                console.log("ボイスチャンネルへ接続しました。");
+                message.channel.send('ボイスチャンネルへ接続しました。', {code: true});
+                message.reply("\nチャットの読み上げ準備ができました。切断時は" + prefix + "killです。\n" +
+                    prefix + "mode で読み上げAPIを変更できます。\n " + prefix +
+                    "voiceでよみあげ音声を選択できます。\n 音声が読み上げられない場合は" + prefix + "reconnectを試してみてください。");
+            }
         } else {
             message.reply("まずあなたがボイスチャンネルへ接続している必要があります。");
         }
@@ -106,13 +114,10 @@ client.on('message', message => {
         if (conext && conext.status !== 4) {
             conext.disconnect();
             if (message.member.voice.channel) {
-                message.member.voice.channel.join()
-                    .then(connection => { // Connection is an instance of VoiceConnection
-                        console.log("ボイスチャンネルへ再接続しました。");
-                        message.channel.send('ボイスチャンネルへ再接続しました。', {code: true});
-                        conext = connection;
-                    })
-                    .catch(err => console.log(err));
+                if (voiceChanelJoin(message.member.voice.channel)){
+                    console.log("ボイスチャンネルへ再接続しました。");
+                    message.channel.send('ボイスチャンネルへ再接続しました。', {code: true});
+                }
             } else {
                 message.reply("まずあなたがボイスチャンネルへ接続している必要があります。");
             }
