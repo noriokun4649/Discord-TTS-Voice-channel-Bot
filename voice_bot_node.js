@@ -19,15 +19,19 @@ let conext;
 let discordToken = null;
 let voiceTextApiKey = null;
 let prefix = "/";
+let autoRestart = true;
 let readMe = false;
 let apiType = 1;
 let voiceType = "haruka";
 let blackList;
+let channelHistory;
 
 function readConfig() {
     discordToken = config.get('Api.discordToken');
     voiceTextApiKey = config.get('Api.voiceTextApiKey');
     prefix = config.get('Prefix');
+    autoRestart = config.get('AutoRestart');
+    if (typeof autoRestart !== 'boolean') throw new Error("Require a boolean type.");
     readMe = config.get('ReadMe');
     if (typeof readMe !== 'boolean') throw new Error("Require a boolean type.");
     apiType = config.get('Defalut.apiType');
@@ -56,14 +60,14 @@ function discordLogin () {
 
 discordLogin();
 
-process.on('uncaughtException', err => {
-    console.error(err);
-    if (client.status != null) {
-        client.user.send(err, {code: true});
-    } else {
-        console.error("NOT CONNECT");
-        if (autoRestart) discordLogin();
-    }
+function autoRestartFunc(){
+    console.log("再接続処理開始");
+    discordLogin();
+    console.log("5秒後にボイスチャンネルへの接続を試行");
+    setTimeout(() => {
+        if (channelHistory && voiceChanelJoin(channelHistory)) console.log("ボイスチャンネルへ再接続成功");
+    },5000);
+}
 
 function voiceChanelJoin(chanelId){
     channelHistory = chanelId;
@@ -78,12 +82,24 @@ function voiceChanelJoin(chanelId){
     return true
 }
 
-process.on('unhandledRejection', error => {
+function onErrorListen(error){
+    if (conext && conext.status !== 4) conext.disconnect();
+    client.destroy();
     console.error(error.name);
     console.error(error.message);
     console.error(error.code);
-    if (autoRestart) discordLogin();
-});
+    console.error(error);
+    if (client.status != null) {
+        client.user.send(error, {code: true});
+    } else {
+        console.error("NOT CONNECT");
+        if (autoRestart) autoRestartFunc();
+    }
+}
+
+process.on('uncaughtException', onErrorListen);
+
+process.on('unhandledRejection', onErrorListen);
 
 client.on('ready', () => {
     console.log("Bot準備完了");
