@@ -51,7 +51,7 @@ const voiceText = new VoiceText(voiceTextApiKey); //Voice Text API key
 
 client.login(discordToken); //Discord login token
 
-process.on('uncaughtException', function (err) {
+process.on('uncaughtException', err => {
     console.error(err);
     if (client.status != null) {
         client.user.send(err, {code: true});
@@ -196,14 +196,14 @@ client.on('message', message => {
 
     function isBlackListsFromPrefixes(cont) {
         let prefixes = blackList.get("prefixes");
-        return prefixes.find(function (prefix) {
+        return prefixes.find(prefix => {
             return cont.indexOf(prefix) === 0;
         });
     }
 
     function isBlackListsFromID(menId) {
         let memberIds = blackList.get("memberIds");
-        return memberIds.find(function (id) {
+        return memberIds.find(id => {
             return menId === id;
         });
     }
