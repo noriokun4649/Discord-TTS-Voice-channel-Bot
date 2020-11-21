@@ -25,6 +25,7 @@ configフォルダ内のdefault.jsonがコンフィグファイルです。
     "voiceTextApiKey": ""
   },
   "Prefix": "/",
+  "AutoRestart": true,
   "ReadMe": false,
   "Defalut": {
     "apiType": 1,
@@ -45,8 +46,9 @@ configフォルダ内のdefault.jsonがコンフィグファイルです。
 | 項目 | 内容・説明  |
 | ------------ | ------------ |
 | discordToken  |  Discordのトークンを記入 |
-|  voiceTextApiKey | VoiceTextのAPIキーを記入  |
+| voiceTextApiKey | VoiceTextのAPIキーを記入  |
 | Prefix  |  コマンドの接頭語を決めます |
+| AutoRestart  |  予期せぬエラー時に自動でボイスチャンネルへ再接続すかどうか |
 | ReadMe  |  このBotが送るメッセージを読み上げるかどうか |
 | apiType  |  デフォルトのAPIを指定 (利用できるAPIが1になってしまったので無意味)|
 | voiceType  |  デフォルトのボイスを指定 |
