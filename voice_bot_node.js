@@ -79,7 +79,7 @@ client.on('message', message => {
     if (message.content === prefix + 'join') {
         // Only try to join the sender's voice channel if they are in one themselves
         if (message.member.voice.channel) {
-            if (conext) conext.disconnect();
+            if (conext && conext.status !== 4) conext.disconnect();
             message.member.voice.channel.join()
                 .then(connection => { // Connection is an instance of VoiceConnection
                     console.log("ボイスチャンネルへ接続しました。");
@@ -96,7 +96,7 @@ client.on('message', message => {
     }
 
     if (message.content === prefix + 'reconnect') {
-        if (conext) {
+        if (conext && conext.status !== 4) {
             conext.disconnect();
             if (message.member.voice.channel) {
                 message.member.voice.channel.join()
@@ -109,12 +109,18 @@ client.on('message', message => {
             } else {
                 message.reply("まずあなたがボイスチャンネルへ接続している必要があります。");
             }
+        }else{
+            message.reply("Botはボイスチャンネルに接続していないようです。");
         }
     }
 
     if (message.content === prefix + 'kill') {
-        message.channel.send(':dash:');
-        conext.disconnect();
+        if (conext && conext.status !== 4) {
+            conext.disconnect();
+            message.channel.send(':dash:');
+        }else{
+            message.reply('Botはボイスチャンネルに接続していないようです。');
+        }
     }
 
     if (message.content.indexOf(prefix + 'mode') === 0) {
@@ -230,7 +236,7 @@ client.on('message', message => {
     }
 
     function yomiage(obj) {
-        if (obj.cons && (message.guild.id === conext.channel.guild.id)) {
+        if (obj.cons === 0 && (message.guild.id === conext.channel.guild.id)) {
             mode_api(obj).then((buffer) => {
                 obj.cons.play(bufferToStream(buffer)); //保存されたWAV再生
                 console.log(obj.msg + 'の読み上げ完了');
