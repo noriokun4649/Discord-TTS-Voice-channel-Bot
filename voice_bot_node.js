@@ -49,7 +49,12 @@ const client = new Discord.Client();
 
 const voiceText = new VoiceText(voiceTextApiKey); //Voice Text API key
 
-client.login(discordToken); //Discord login token
+function discordLogin () {
+    client.login(discordToken); //Discord login token
+    console.log("DiscordBotログイン処理を実行")
+}
+
+discordLogin();
 
 process.on('uncaughtException', err => {
     console.error(err);
@@ -57,6 +62,7 @@ process.on('uncaughtException', err => {
         client.user.send(err, {code: true});
     } else {
         console.error("NOT CONNECT");
+        if (autoRestart) discordLogin();
     }
 
 });
@@ -65,6 +71,7 @@ process.on('unhandledRejection', error => {
     console.error(error.name);
     console.error(error.message);
     console.error(error.code);
+    if (autoRestart) discordLogin();
 });
 
 client.on('ready', () => {

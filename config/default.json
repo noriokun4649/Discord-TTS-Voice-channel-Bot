@@ -4,6 +4,7 @@
     "voiceTextApiKey": ""
   },
   "Prefix": "/",
+  "AutoRestart": true,
   "ReadMe": false,
   "Defalut": {
     "apiType": 1,
