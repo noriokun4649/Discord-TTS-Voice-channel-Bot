@@ -5,7 +5,7 @@ const conf = require('config-reloadable');
 const client = new Discord.Client();
 
 let config = conf();
-let voice_lists_1 = {
+let voiceLists1 = {
     hikari: 'ひかり（女性）',
     haruka: 'はるか（女性）',
     takeru: 'たける（男性）',
@@ -13,10 +13,10 @@ let voice_lists_1 = {
     bear: '凶暴なクマ',
     show: 'ショウ（男性）'
 };
-let mode_list = {
+let modeList1 = {
     1: 'HOYA VoiceText API'
 };
-let conext;
+let context;
 let discordToken = null;
 let voiceTextApiKey = null;
 let prefix = "/";
@@ -38,9 +38,9 @@ function readConfig() {
     readMe = config.get('ReadMe');
     if (typeof readMe !== 'boolean') throw new Error("Require a boolean type.");
     apiType = config.get('Defalut.apiType');
-    if (!mode_list[apiType]) throw new Error("Unknown api.");
+    if (!modeList1[apiType]) throw new Error("Unknown api.");
     voiceType = config.get('Defalut.voiceType');
-    if (!voice_lists_1[voiceType]) throw new Error("Unknown voice.");
+    if (!voiceLists1[voiceType]) throw new Error("Unknown voice.");
     blackList = config.get('BlackLists');
     return true;
 }
@@ -54,11 +54,11 @@ function autoRestartFunc() {
     }, 5000);
 }
 
-function voiceChanelJoin(chanelId) {
-    channelHistory = chanelId;
-    chanelId.join()
+function voiceChanelJoin(channelId) {
+    channelHistory = channelId;
+    channelId.join()
         .then(connection => { // Connection is an instance of VoiceConnection
-            conext = connection;
+            context = connection;
         })
         .catch(err => {
             console.log(err)
@@ -68,7 +68,7 @@ function voiceChanelJoin(chanelId) {
 }
 
 function onErrorListen(error) {
-    if (conext && conext.status !== 4) conext.disconnect();
+    if (context && context.status !== 4) context.disconnect();
     client.destroy();
     console.error(error.name);
     console.error(error.message);
@@ -88,7 +88,7 @@ function discordLogin() {
 }
 
 readConfig();
-let voice_patan_1 = voiceType; //初期時のよみあげ音声
+let voicePattern1 = voiceType; //初期時のよみあげ音声
 let mode = apiType;
 const voiceText = new VoiceText(voiceTextApiKey); //Voice Text API key
 
@@ -110,7 +110,7 @@ client.on('message', message => {
     if (message.content === prefix + 'join') {
         // Only try to join the sender's voice channel if they are in one themselves
         if (message.member.voice.channel) {
-            if (conext && conext.status !== 4) conext.disconnect();
+            if (context && context.status !== 4) context.disconnect();
             if (voiceChanelJoin(message.member.voice.channel)) {
                 console.log("ボイスチャンネルへ接続しました。");
                 message.channel.send('ボイスチャンネルへ接続しました。', {code: true});
@@ -124,8 +124,8 @@ client.on('message', message => {
     }
 
     if (message.content === prefix + 'reconnect') {
-        if (conext && conext.status !== 4) {
-            conext.disconnect();
+        if (context && context.status !== 4) {
+            context.disconnect();
             if (message.member.voice.channel) {
                 if (voiceChanelJoin(message.member.voice.channel)) {
                     console.log("ボイスチャンネルへ再接続しました。");
@@ -140,8 +140,8 @@ client.on('message', message => {
     }
 
     if (message.content === prefix + 'kill') {
-        if (conext && conext.status !== 4) {
-            conext.disconnect();
+        if (context && context.status !== 4) {
+            context.disconnect();
             message.channel.send(':dash:');
         } else {
             message.reply('Botはボイスチャンネルに接続していないようです。');
@@ -151,13 +151,13 @@ client.on('message', message => {
     if (message.content.indexOf(prefix + 'mode') === 0) {
         let mode_type = message.content.split(' ');
         if (1 < mode_type.length) {
-            if (mode_list[mode_type[1]] != null) {
+            if (modeList1[mode_type[1]] != null) {
                 mode = Number(mode_type[1]);
-                let mode_to = "読み上げAPIを" + mode_type[1] + " : " + mode_list[mode_type[1]] + "に設定しました。";
+                let mode_to = "読み上げAPIを" + mode_type[1] + " : " + modeList1[mode_type[1]] + "に設定しました。";
                 message.reply(mode_to);
                 yomiage({
                     msg: mode_to,
-                    cons: conext
+                    cons: context
                 })
             } else {
                 mode = Number(mode_type[1]);
@@ -165,8 +165,8 @@ client.on('message', message => {
             }
         } else {
             let mode_names = "\n以下のAPIに切り替え可能です。 指定時の例：" + prefix + "mode 1\n";
-            for (indexs in mode_list) {
-                mode_names = mode_names + indexs + " -> " + mode_list[indexs] + "\n";
+            for (let indexes in modeList1) {
+                mode_names = mode_names + indexes + " -> " + modeList1[indexes] + "\n";
             }
             message.reply(mode_names);
         }
@@ -176,8 +176,8 @@ client.on('message', message => {
     if (message.content === prefix + 'type') {
         let outputs = "\n音声タイプ -> その説明\n";
         if (mode === 1) {
-            for (outdata in voice_lists_1) {
-                outputs = outputs + outdata + "->" + voice_lists_1[outdata] + "\n";
+            for (let output in voiceLists1) {
+                outputs = outputs + output + "->" + voiceLists1[output] + "\n";
             }
         } else {
             outputs = outputs + "APIが不正です";
@@ -189,13 +189,13 @@ client.on('message', message => {
         let vo = message.content.split(' ');
         if (mode === 1) {
             if (1 < vo.length) {
-                if (voice_lists_1[vo[1]] != null) {
-                    voice_patan_1 = vo[1];
-                    let mess_to = "読み上げ音声を" + vo[1] + " : " + voice_lists_1[vo[1]] + "に設定しました。";
+                if (voiceLists1[vo[1]] != null) {
+                    voicePattern1 = vo[1];
+                    let mess_to = "読み上げ音声を" + vo[1] + " : " + voiceLists1[vo[1]] + "に設定しました。";
                     message.reply(mess_to);
                     yomiage({
                         msg: mess_to,
-                        cons: conext
+                        cons: context
                     });
                 } else {
                     message.reply("指定された読み上げ音声タイプが不正です。指定可能な音声タイプは" + prefix + "typeで見ることが可能です。");
@@ -243,7 +243,7 @@ client.on('message', message => {
         try {
             yomiage({
                 msg: mention_replace(emoji_delete(url_delete(message.content + "。"))),
-                cons: conext
+                cons: context
             })
         } catch (err) {
             console.log(err.message);
@@ -289,14 +289,14 @@ client.on('message', message => {
     }
 
     function yomiage(obj) {
-        if (obj.cons && obj.cons.status === 0 && (message.guild.id === conext.channel.guild.id)) {
+        if (obj.cons && obj.cons.status === 0 && (message.guild.id === context.channel.guild.id)) {
             mode_api(obj).then((buffer) => {
                 obj.cons.play(bufferToStream(buffer)); //保存されたWAV再生
                 console.log(obj.msg + 'の読み上げ完了');
             }).catch((error) => {
                 console.log('error ->');
                 console.error(error);
-                message.channel.send(mode_list[mode] + "の呼び出しにエラーが発生しました。\nエラー内容:" + error.details[0].message, {code: true});
+                message.channel.send(modeList1[mode] + "の呼び出しにエラーが発生しました。\nエラー内容:" + error.details[0].message, {code: true});
             });
         } else {
             console.log("Botがボイスチャンネルへ接続してません。");
@@ -305,7 +305,7 @@ client.on('message', message => {
 
     function mode_api(obj) {
         if (mode === 1) {
-            return voiceText.fetchBuffer(obj.msg, {format: 'wav', speaker: voice_patan_1, pitch: pitch, speed: speed});
+            return voiceText.fetchBuffer(obj.msg, {format: 'wav', speaker: voicePattern1, pitch: pitch, speed: speed});
         } else {
             throw Error("不明なAPIが選択されています:" + mode);
         }
