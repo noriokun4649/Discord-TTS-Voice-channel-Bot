@@ -38,7 +38,8 @@ configフォルダ内のdefault.jsonがコンフィグファイルです。
     "prefixes": [
       "!",
       "/"
-    ]
+    ],
+    "bots": true
   }
 }
 ```
