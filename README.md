@@ -54,6 +54,7 @@ configフォルダ内のdefault.jsonがコンフィグファイルです。
 | voiceType  |  デフォルトのボイスを指定 |
 | memberIds  |  読み上げから除外するユーザーのユーザーID |
 | prefixes  |  読み上げから除外する接頭語  |
+| bots  |  Botを読み上げから除外する  |
 
 # Botのコマンドリスト
 

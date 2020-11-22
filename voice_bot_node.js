@@ -239,7 +239,7 @@ client.on('message', message => {
         }
     }
 
-    if (!(isBlackListsFromID(message.member.id) || isBlackListsFromPrefixes(message.content)) && isRead(message.member.id)) {
+    if (!(isBot() || isBlackListsFromID(message.member.id) || isBlackListsFromPrefixes(message.content)) && isRead(message.member.id)) {
         try {
             yomiage({
                 msg: mention_replace(emoji_delete(url_delete(message.content + "。"))),
@@ -265,6 +265,11 @@ client.on('message', message => {
         return memberIds.find(id => {
             return menId === id;
         });
+    }
+
+    function isBot(){
+        let bots = blackList.get("bots");
+        return bots ? message.author.bot : false;
     }
 
     function isRead(id) {
