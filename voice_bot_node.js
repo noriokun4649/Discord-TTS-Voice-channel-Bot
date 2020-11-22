@@ -149,52 +149,52 @@ client.on('message', message => {
     }
 
     if (message.content.indexOf(prefix + 'mode') === 0) {
-        let mode_type = message.content.split(' ');
-        if (1 < mode_type.length) {
-            if (modeList1[mode_type[1]] != null) {
-                mode = Number(mode_type[1]);
-                let mode_to = "読み上げAPIを" + mode_type[1] + " : " + modeList1[mode_type[1]] + "に設定しました。";
-                message.reply(mode_to);
+        let split = message.content.split(' ');
+        if (1 < split.length) {
+            if (modeList1[split[1]] != null) {
+                mode = Number(split[1]);
+                let modeMessage = "読み上げAPIを" + split[1] + " : " + modeList1[split[1]] + "に設定しました。";
+                message.reply(modeMessage);
                 yomiage({
-                    msg: mode_to,
+                    msg: modeMessage,
                     cons: context
                 })
             } else {
-                mode = Number(mode_type[1]);
+                mode = Number(split[1]);
                 message.reply("指定されたAPIが不正です。指定可能なAPIは" + prefix + "modeで見ることが可能です。");
             }
         } else {
-            let mode_names = "\n以下のAPIに切り替え可能です。 指定時の例：" + prefix + "mode 1\n";
+            let modeNames = "\n以下のAPIに切り替え可能です。 指定時の例：" + prefix + "mode 1\n";
             for (let indexes in modeList1) {
-                mode_names = mode_names + indexes + " -> " + modeList1[indexes] + "\n";
+                modeNames = modeNames + indexes + " -> " + modeList1[indexes] + "\n";
             }
-            message.reply(mode_names);
+            message.reply(modeNames);
         }
 
     }
 
     if (message.content === prefix + 'type') {
-        let outputs = "\n音声タイプ -> その説明\n";
+        let typeMessage = "\n音声タイプ -> その説明\n";
         if (mode === 1) {
-            for (let output in voiceLists1) {
-                outputs = outputs + output + "->" + voiceLists1[output] + "\n";
+            for (let voiceLists1Key in voiceLists1) {
+                typeMessage = typeMessage + voiceLists1Key + "->" + voiceLists1[voiceLists1Key] + "\n";
             }
         } else {
-            outputs = outputs + "APIが不正です";
+            typeMessage = typeMessage + "APIが不正です";
         }
-        message.reply(outputs);
+        message.reply(typeMessage);
     }
 
     if (message.content.indexOf(prefix + 'voice') === 0) {
-        let vo = message.content.split(' ');
+        let split = message.content.split(' ');
         if (mode === 1) {
-            if (1 < vo.length) {
-                if (voiceLists1[vo[1]] != null) {
-                    voicePattern1 = vo[1];
-                    let mess_to = "読み上げ音声を" + vo[1] + " : " + voiceLists1[vo[1]] + "に設定しました。";
-                    message.reply(mess_to);
+            if (1 < split.length) {
+                if (voiceLists1[split[1]] != null) {
+                    voicePattern1 = split[1];
+                    let voiceMessage = "読み上げ音声を" + split[1] + " : " + voiceLists1[split[1]] + "に設定しました。";
+                    message.reply(voiceMessage);
                     yomiage({
-                        msg: mess_to,
+                        msg: voiceMessage,
                         cons: context
                     });
                 } else {
@@ -212,13 +212,13 @@ client.on('message', message => {
     }
 
     if (message.content.indexOf(prefix + 'pitch') === 0) {
-        let vo = message.content.split(' ');
+        let split = message.content.split(' ');
         if (mode === 1) {
-            if (1 < vo.length) {
-                if (vo[1] <= 200 && vo[1] >= 0) {
-                    pitch = Number(vo[1]);
-                    message.channel.send("読み上げ音声の高さを"+vo[1]+"に変更しました。", {code: true});
-                }else{
+            if (1 < split.length) {
+                if (split[1] <= 200 && split[1] >= 0) {
+                    pitch = Number(split[1]);
+                    message.channel.send("読み上げ音声の高さを" + split[1] + "に変更しました。", {code: true});
+                } else {
                     message.reply("読み上げ音声の高さは 0 ～ 200 の範囲内で設定してください。")
                 }
             }
@@ -226,13 +226,13 @@ client.on('message', message => {
     }
 
     if (message.content.indexOf(prefix + 'speed') === 0) {
-        let vo = message.content.split(' ');
+        let split = message.content.split(' ');
         if (mode === 1) {
-            if (1 < vo.length) {
-                if (vo[1] <= 200 && vo[1] >= 0) {
-                    speed = Number(vo[1]);
-                    message.channel.send("読み上げ音声の速度を"+vo[1]+"に変更しました。", {code: true});
-                }else{
+            if (1 < split.length) {
+                if (split[1] <= 200 && split[1] >= 0) {
+                    speed = Number(split[1]);
+                    message.channel.send("読み上げ音声の速度を" + split[1] + "に変更しました。", {code: true});
+                } else {
                     message.reply("読み上げ音声の速度は 0 ～ 200 の範囲内で設定してください")
                 }
             }
@@ -245,9 +245,9 @@ client.on('message', message => {
                 msg: mention_replace(emoji_delete(url_delete(message.content + "。"))),
                 cons: context
             })
-        } catch (err) {
-            console.log(err.message);
-            message.channel.send(err.message, {code: true});
+        } catch (error) {
+            console.log(error.message);
+            message.channel.send(error.message, {code: true});
         }
     } else {
         console.log("読み上げ対象外のチャットです");
@@ -283,9 +283,9 @@ client.on('message', message => {
 
     function mention_replace(str) {
         let pat = /<@!(\d*)>/g;
-        let [match_val] = str.matchAll(pat);
-        if (match_val === undefined) return str;
-        return str.replace(pat, client.users.resolve(match_val[1]).username);
+        let [matchAllElement] = str.matchAll(pat);
+        if (matchAllElement === undefined) return str;
+        return str.replace(pat, client.users.resolve(matchAllElement[1]).username);
     }
 
     function yomiage(obj) {
