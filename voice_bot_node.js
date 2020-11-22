@@ -78,7 +78,7 @@ function onErrorListen(error) {
         client.user.send(error, {code: true});
     } else {
         console.error("NOT CONNECT");
-        if (autoRestart) autoRestartFunc();
+        autoRestart ? autoRestartFunc() : process.exit(1);
     }
 }
 
