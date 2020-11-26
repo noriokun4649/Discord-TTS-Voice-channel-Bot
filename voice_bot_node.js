@@ -215,11 +215,11 @@ client.on('message', message => {
         let split = message.content.split(' ');
         if (mode === 1) {
             if (1 < split.length) {
-                if (split[1] <= 200 && split[1] >= 0) {
+                if (split[1] <= 200 && split[1] >= 50) {
                     pitch = Number(split[1]);
                     message.channel.send("読み上げ音声の高さを" + split[1] + "に変更しました。", {code: true});
                 } else {
-                    message.reply("読み上げ音声の高さは 0 ～ 200 の範囲内で設定してください。")
+                    message.reply("読み上げ音声の高さは 50 ～ 200 の範囲内で設定してください。")
                 }
             }
         }
@@ -229,11 +229,11 @@ client.on('message', message => {
         let split = message.content.split(' ');
         if (mode === 1) {
             if (1 < split.length) {
-                if (split[1] <= 200 && split[1] >= 0) {
+                if (split[1] <= 200 && split[1] >= 50) {
                     speed = Number(split[1]);
                     message.channel.send("読み上げ音声の速度を" + split[1] + "に変更しました。", {code: true});
                 } else {
-                    message.reply("読み上げ音声の速度は 0 ～ 200 の範囲内で設定してください")
+                    message.reply("読み上げ音声の速度は 50 ～ 200 の範囲内で設定してください")
                 }
             }
         }
