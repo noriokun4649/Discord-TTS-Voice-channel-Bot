@@ -11,6 +11,9 @@
     "type": "git",
     "url": "git+https://github.com/noriokun4649/Discord-TTS-Voice-channel-Bot.git"
   },
+  "engines": {
+    "node": ">=12.20.0"
+  },
   "dependencies": {
     "@discordjs/opus": "^0.3.2",
     "config": "^3.3.2",
