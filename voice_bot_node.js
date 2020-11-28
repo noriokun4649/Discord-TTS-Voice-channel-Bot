@@ -28,6 +28,8 @@ let blackList;
 let channelHistory;
 let speed = 100;
 let pitch = 100;
+const timeoutOffset = 5;
+let timeout = timeoutOffset;
 
 function readConfig() {
     discordToken = config.get('Api.discordToken');
@@ -46,17 +48,16 @@ function readConfig() {
 }
 
 function autoRestartFunc() {
-    console.log("再接続処理開始");
-    discordLogin();
-    console.log("5秒後にボイスチャンネルへの接続を試行");
+    console.log(timeout + "秒後に再接続処理開始");
     setTimeout(() => {
-        if (channelHistory && voiceChanelJoin(channelHistory)) console.log("ボイスチャンネルへ再接続成功");
-    }, 5000);
+        discordLogin();
+    } ,timeout * 1000);
+    timeout *= 2;
 }
 
-function voiceChanelJoin(channelId) {
+async function voiceChanelJoin(channelId) {
     channelHistory = channelId;
-    channelId.join()
+    await channelId.join()
         .then(connection => { // Connection is an instance of VoiceConnection
             context = connection;
         })
@@ -82,9 +83,17 @@ function onErrorListen(error) {
     }
 }
 
-function discordLogin() {
-    client.login(discordToken); //Discord login token
+async function discordLogin() {
     console.log("DiscordBotログイン処理を実行")
+    await client.login(discordToken); //Discord login token
+    console.log("DiscordBotログイン処理を完了")
+    console.log("ボイスチャンネルへの接続を試行");
+    if (channelHistory && await voiceChanelJoin(channelHistory)){
+        console.log("ボイスチャンネルへ再接続成功");
+    } else {
+        console.log("直前に接続していたボイスチャンネル無し");
+    }
+    timeout = timeoutOffset;
 }
 
 readConfig();
