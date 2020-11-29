@@ -79,6 +79,7 @@ function onErrorListen(error) {
         client.user.send(error, {code: true});
     } else {
         console.error("NOT CONNECT");
+        if (error.code === "TOKEN_INVALID") process.exit(1);
         autoRestart ? autoRestartFunc() : process.exit(1);
     }
 }
