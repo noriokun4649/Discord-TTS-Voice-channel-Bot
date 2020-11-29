@@ -320,6 +320,7 @@ client.on('message', message => {
                 message.channel.send(modeList1[mode] + "の呼び出しにエラーが発生しました。\nエラー内容:" + error.details[0].message, {code: true});
             });
         } else {
+            message.channel.send("Botがボイスチャンネルへ接続してません", {code: true});
             console.log("Botがボイスチャンネルへ接続してません。");
         }
     }
