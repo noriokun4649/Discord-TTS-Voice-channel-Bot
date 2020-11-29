@@ -139,14 +139,14 @@ client.on('message', message => {
     if (message.content === prefix + 'reconnect') {
         if (context && context.status !== 4) {
             context.disconnect();
-            message.channel.send('15秒後にボイスチャンネルへ再接続します。', {code: true});
+            message.channel.send('5秒後にボイスチャンネルへ再接続します。', {code: true});
             if (message.member.voice.channel) {
                 setTimeout(() => {
                     if (voiceChanelJoin(message.member.voice.channel)) {
                         console.log("ボイスチャンネルへ再接続しました。");
                         message.channel.send('ボイスチャンネルへ再接続しました。', {code: true});
                     }
-                }, 15000);
+                }, 5000);
             } else {
                 message.reply("まずあなたがボイスチャンネルへ接続している必要があります。");
             }
