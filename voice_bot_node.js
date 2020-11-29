@@ -51,7 +51,7 @@ function autoRestartFunc() {
     console.log(timeout + "秒後に再接続処理開始");
     setTimeout(() => {
         discordLogin();
-    } ,timeout * 1000);
+    }, timeout * 1000);
     timeout *= 2;
 }
 
@@ -89,7 +89,7 @@ async function discordLogin() {
     await client.login(discordToken); //Discord login token
     console.log("DiscordBotログイン処理を完了")
     console.log("ボイスチャンネルへの接続を試行");
-    if (channelHistory && await voiceChanelJoin(channelHistory)){
+    if (channelHistory && await voiceChanelJoin(channelHistory)) {
         console.log("ボイスチャンネルへ再接続成功");
     } else {
         console.log("直前に接続していたボイスチャンネル無し");
@@ -283,7 +283,7 @@ client.on('message', message => {
         });
     }
 
-    function isBot(){
+    function isBot() {
         let bots = blackList.get("bots");
         return bots ? message.author.bot : false;
     }
