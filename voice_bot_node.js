@@ -31,7 +31,7 @@ let pitch = 100;
 const timeoutOffset = 5;
 let timeout = timeoutOffset;
 
-function readConfig() {
+const readConfig = () => {
     discordToken = config.get('Api.discordToken');
     voiceTextApiKey = config.get('Api.voiceTextApiKey');
     prefix = config.get('Prefix');
@@ -45,17 +45,17 @@ function readConfig() {
     if (!voiceLists1[voiceType]) throw new Error('Unknown voice.');
     blackList = config.get('BlackLists');
     return true;
-}
+};
 
-function autoRestartFunc() {
+const autoRestartFunc = () => {
     console.log(`${timeout}秒後に再接続処理開始`);
     setTimeout(() => {
         discordLogin();
     }, timeout * 1000);
     timeout *= 2;
-}
+};
 
-async function voiceChanelJoin(channelId) {
+const voiceChanelJoin = async (channelId) => {
     channelHistory = channelId;
     await channelId.join()
         .then((connection) => {
@@ -66,9 +66,9 @@ async function voiceChanelJoin(channelId) {
             return false;
         });
     return true;
-}
+};
 
-function onErrorListen(error) {
+const onErrorListen = (error) => {
     if (context && context.status !== 4) context.disconnect();
     client.destroy();
     console.error(error.name);
@@ -82,9 +82,9 @@ function onErrorListen(error) {
         if (error.code === 'TOKEN_INVALID') process.exit(1);
         autoRestart ? autoRestartFunc() : process.exit(1);
     }
-}
+};
 
-async function discordLogin() {
+const discordLogin = async () => {
     console.log('DiscordBotログイン処理を実行');
     await client.login(discordToken); //Discord login token
     console.log('DiscordBotログイン処理を完了');
@@ -95,7 +95,7 @@ async function discordLogin() {
         console.log('直前に接続していたボイスチャンネル無し');
     }
     timeout = timeoutOffset;
-}
+};
 
 readConfig();
 let voicePattern1 = voiceType; //初期時のよみあげ音声
@@ -114,6 +114,70 @@ client.on('ready', () => {
 
 client.on('message', (message) => {
     if (!message.guild) return;
+
+    const isBlackListsFromPrefixes = (cont) => {
+        const prefixes = blackList.get('prefixes');
+        return prefixes.find((prefix) => cont.indexOf(prefix) === 0);
+    };
+
+    const isBlackListsFromID = (menId) => {
+        const memberIds = blackList.get('memberIds');
+        return memberIds.find((id) => menId === id);
+    };
+
+    const isBot = () => {
+        const bots = blackList.get('bots');
+        return bots ? message.author.bot : false;
+    };
+
+    const isRead = (id) => readMe === false ? id !== client.user.id : readMe;
+
+    const url_delete = (str) => {
+        const pat = /(https?:\/\/[\x21-\x7e]+)/g;
+        return str.replace(pat, ' URL省略。');
+    };
+
+    const emoji_delete = (str) => {
+        const pat = /(<:\w*:\d*>)/g;
+        return str.replace(pat, '');
+    };
+
+    const mention_replace = (str) => {
+        const pat = /<@!(\d*)>/g;
+        const [matchAllElement] = str.matchAll(pat);
+        if (matchAllElement === undefined) return str;
+        return str.replace(pat, client.users.resolve(matchAllElement[1]).username);
+    };
+
+    const yomiage = (obj) => {
+        if (obj.cons && obj.cons.status === 0 && (message.guild.id === context.channel.guild.id)) {
+            mode_api(obj).then((buffer) => {
+                obj.cons.play(bufferToStream(buffer)); //保存されたWAV再生
+                console.log(`${obj.msg}の読み上げ完了`);
+            }).catch((error) => {
+                console.log('error ->');
+                console.error(error);
+                message.channel.send(`${modeList1[mode]}の呼び出しにエラーが発生しました。\nエラー内容:${error.details[0].message}`, {code: true});
+            });
+        } else {
+            console.log('Botがボイスチャンネルへ接続してません。');
+        }
+    };
+
+    const mode_api = (obj) => {
+        if (mode === 1) {
+            return voiceText.fetchBuffer(obj.msg, {format: 'wav', speaker: voicePattern1, pitch, speed});
+        } else {
+            throw Error(`不明なAPIが選択されています:${mode}`);
+        }
+    };
+
+    const bufferToStream = (buffer) => {
+        const stream = new Readable();
+        stream.push(buffer);
+        stream.push(null);
+        return stream;
+    };
 
     if (message.content === `${prefix}join`) {
         if (message.member.voice.channel) {
@@ -266,69 +330,4 @@ client.on('message', (message) => {
         console.log('読み上げ対象外のチャットです');
     }
 
-    function isBlackListsFromPrefixes(cont) {
-        const prefixes = blackList.get('prefixes');
-        return prefixes.find((prefix) => cont.indexOf(prefix) === 0);
-    }
-
-    function isBlackListsFromID(menId) {
-        const memberIds = blackList.get('memberIds');
-        return memberIds.find((id) => menId === id);
-    }
-
-    function isBot() {
-        const bots = blackList.get('bots');
-        return bots ? message.author.bot : false;
-    }
-
-    function isRead(id) {
-        return readMe === false ? id !== client.user.id : readMe;
-    }
-
-    function url_delete(str) {
-        const pat = /(https?:\/\/[\x21-\x7e]+)/g;
-        return str.replace(pat, ' URL省略。');
-    }
-
-    function emoji_delete(str) {
-        const pat = /(<:\w*:\d*>)/g;
-        return str.replace(pat, '');
-    }
-
-    function mention_replace(str) {
-        const pat = /<@!(\d*)>/g;
-        const [matchAllElement] = str.matchAll(pat);
-        if (matchAllElement === undefined) return str;
-        return str.replace(pat, client.users.resolve(matchAllElement[1]).username);
-    }
-
-    function yomiage(obj) {
-        if (obj.cons && obj.cons.status === 0 && (message.guild.id === context.channel.guild.id)) {
-            mode_api(obj).then((buffer) => {
-                obj.cons.play(bufferToStream(buffer)); //保存されたWAV再生
-                console.log(`${obj.msg}の読み上げ完了`);
-            }).catch((error) => {
-                console.log('error ->');
-                console.error(error);
-                message.channel.send(`${modeList1[mode]}の呼び出しにエラーが発生しました。\nエラー内容:${error.details[0].message}`, {code: true});
-            });
-        } else {
-            console.log('Botがボイスチャンネルへ接続してません。');
-        }
-    }
-
-    function mode_api(obj) {
-        if (mode === 1) {
-            return voiceText.fetchBuffer(obj.msg, {format: 'wav', speaker: voicePattern1, pitch, speed});
-        } else {
-            throw Error(`不明なAPIが選択されています:${mode}`);
-        }
-    }
-
-    function bufferToStream(buffer) {
-        const stream = new Readable();
-        stream.push(buffer);
-        stream.push(null);
-        return stream;
-    }
 });
