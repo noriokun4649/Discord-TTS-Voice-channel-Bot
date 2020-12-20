@@ -98,7 +98,8 @@ const discordLogin = async () => {
 };
 
 readConfig();
-let voicePattern1 = voiceType; //初期時のよみあげ音声
+const voicePattern1 = voiceType; //初期時のよみあげ音声
+const userVoiceType = {}; //読み上げ音声ユーザーのmemberID別
 let mode = apiType;
 const voiceText = new VoiceText(voiceTextApiKey); //Voice Text API key
 
@@ -166,7 +167,7 @@ client.on('message', (message) => {
 
     const mode_api = (obj) => {
         if (mode === 1) {
-            return voiceText.fetchBuffer(obj.msg, {format: 'wav', speaker: voicePattern1, pitch, speed});
+            return voiceText.fetchBuffer(obj.msg, {format: 'wav', speaker: userVoiceType[obj.memberId] != null ? userVoiceType[obj.memberId] : voicePattern1, pitch, speed});
         } else {
             throw Error(`不明なAPIが選択されています:${mode}`);
         }
@@ -267,7 +268,7 @@ client.on('message', (message) => {
         if (mode === 1) {
             if (1 < split.length) {
                 if (voiceLists1[split[1]] != null) {
-                    voicePattern1 = split[1];
+                    userVoiceType[message.member.id] = split[1];
                     const voiceMessage = `読み上げ音声を${split[1]} : ${voiceLists1[split[1]]}に設定しました。`;
                     message.reply(voiceMessage);
                     yomiage({
@@ -320,7 +321,8 @@ client.on('message', (message) => {
         try {
             yomiage({
                 msg: mention_replace(emoji_delete(url_delete(`${message.content}。`))),
-                cons: context
+                cons: context,
+                memberId: message.member.id
             });
         } catch (error) {
             console.log(error.message);
