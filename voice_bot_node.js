@@ -3,6 +3,7 @@ const {VoiceText} = require('voice-text');
 const {Readable} = require('stream');
 const conf = require('config-reloadable');
 const client = new Discord.Client();
+const EventEmitter = require('events');
 
 let config = conf();
 const voiceLists1 = {
@@ -152,14 +153,26 @@ client.on('message', (message) => {
 
     const yomiage = (obj) => {
         if (obj.cons && obj.cons.status === 0 && (message.guild.id === context.channel.guild.id)) {
-            mode_api(obj).then((buffer) => {
-                obj.cons.play(bufferToStream(buffer)); //保存されたWAV再生
-                console.log(`${obj.msg}の読み上げ完了`);
-            }).catch((error) => {
-                console.log('error ->');
-                console.error(error);
-                message.channel.send(`${modeList1[mode]}の呼び出しにエラーが発生しました。\nエラー内容:${error.details[0].message}`, {code: true});
+            const sepMessage = obj.msg.match(/.{1,200}/g); //200以上の場合分割
+            const emitter = new EventEmitter(); //イベント用意
+            const readFunction = () => {//読み上げ機能
+                obj.msg = sepMessage.shift();
+                mode_api(obj).then((buffer) => {
+                    const desp = obj.cons.play(bufferToStream(buffer)); //保存されたWAV再生
+                    desp.on('finish',() => {
+                        if(sepMessage.length > 0) emitter.emit('read'); //読み上げにまだ残りあるならイベント発火
+                    });
+                    console.log(`${obj.msg}の読み上げ完了`);
+                }).catch((error) => {
+                    console.log('error ->');
+                    console.error(error);
+                    message.channel.send(`${modeList1[mode]}の呼び出しにエラーが発生しました。\nエラー内容:${error.details[0].message}`, {code: true});
+                });
+            };
+            emitter.on('read',() => {//イベント受信で読み上げ実行
+                readFunction();
             });
+            readFunction();//最初の読み上げ
         } else {
             console.log('Botがボイスチャンネルへ接続してません。');
         }
