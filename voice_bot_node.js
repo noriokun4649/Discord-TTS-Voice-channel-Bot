@@ -156,7 +156,7 @@ client.on('message', (message) => {
             const sepMessage = obj.msg.match(/.{1,200}/g); //200以上の場合分割
             const emitter = new EventEmitter(); //イベント用意
             const readFunction = () => {//読み上げ機能
-                obj.msg = sepMessage.shift();
+                obj.msg = sepMessage.shift(); //queue処理
                 mode_api(obj).then((buffer) => {
                     const desp = obj.cons.play(bufferToStream(buffer)); //保存されたWAV再生
                     desp.on('finish',() => {
@@ -169,9 +169,7 @@ client.on('message', (message) => {
                     message.channel.send(`${modeList1[mode]}の呼び出しにエラーが発生しました。\nエラー内容:${error.details[0].message}`, {code: true});
                 });
             };
-            emitter.on('read',() => {//イベント受信で読み上げ実行
-                readFunction();
-            });
+            emitter.on('read',() => readFunction()); //イベント受信で読み上げ実行
             readFunction();//最初の読み上げ
         } else {
             console.log('Botがボイスチャンネルへ接続してません。');
