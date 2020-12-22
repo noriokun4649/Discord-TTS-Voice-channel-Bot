@@ -23,10 +23,12 @@ let voiceTextApiKey = null;
 let prefix = '/';
 let autoRestart = true;
 let readMe = false;
+let allTextChannelRead = false;
 let apiType = 1;
 let voiceType = 'haruka';
 let blackList;
 let channelHistory;
+let textChannelHistory;
 let speed = 100;
 let pitch = 100;
 const timeoutOffset = 5;
@@ -39,6 +41,8 @@ const readConfig = () => {
     autoRestart = config.get('AutoRestart');
     if (typeof autoRestart !== 'boolean') throw new Error('Require a boolean type.');
     readMe = config.get('ReadMe');
+    if (typeof readMe !== 'boolean') throw new Error('Require a boolean type.');
+    allTextChannelRead = config.get('AllTextChannelRead');
     if (typeof readMe !== 'boolean') throw new Error('Require a boolean type.');
     apiType = config.get('Defalut.apiType');
     if (!modeList1[apiType]) throw new Error('Unknown api.');
@@ -195,6 +199,7 @@ client.on('message', (message) => {
         if (message.member.voice.channel) {
             if (!context || (context && context.status === 4)) {
                 if (voiceChanelJoin(message.member.voice.channel)) {
+                    textChannelHistory = message.channel.id;
                     console.log('ボイスチャンネルへ接続しました。');
                     message.channel.send('ボイスチャンネルへ接続しました。', {code: true});
                     message.reply(`\nチャットの読み上げ準備ができました。切断時は${prefix}killです。\n${ 
@@ -216,6 +221,7 @@ client.on('message', (message) => {
             if (message.member.voice.channel) {
                 setTimeout(() => {
                     if (voiceChanelJoin(message.member.voice.channel)) {
+                        textChannelHistory = message.channel.id;
                         console.log('ボイスチャンネルへ再接続しました。');
                         message.channel.send('ボイスチャンネルへ再接続しました。', {code: true});
                     }
@@ -329,15 +335,19 @@ client.on('message', (message) => {
     }
 
     if (!(isBot() || isBlackListsFromID(message.member.id) || isBlackListsFromPrefixes(message.content)) && isRead(message.member.id)) {
-        try {
-            yomiage({
-                msg: mention_replace(emoji_delete(url_delete(`${message.content}。`))),
-                cons: context,
-                memberId: message.member.id
-            });
-        } catch (error) {
-            console.log(error.message);
-            message.channel.send(error.message, {code: true});
+        if (message.channel.id === textChannelHistory || allTextChannelRead){
+            try {
+                yomiage({
+                    msg: mention_replace(emoji_delete(url_delete(`${message.content}。`))),
+                    cons: context,
+                    memberId: message.member.id
+                });
+            } catch (error) {
+                console.log(error.message);
+                message.channel.send(error.message, {code: true});
+            }
+        }else{
+            console.log('Join,Reconnectコマンドが実行されたテキストチャンネル以外です');
         }
     } else {
         console.log('読み上げ対象外のチャットです');

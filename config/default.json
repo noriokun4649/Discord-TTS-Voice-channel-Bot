@@ -6,6 +6,7 @@
   "Prefix": "/",
   "AutoRestart": true,
   "ReadMe": false,
+  "AllTextChannelRead": false,
   "Defalut": {
     "apiType": 1,
     "voiceType": "hikari"
