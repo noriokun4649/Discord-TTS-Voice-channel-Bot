@@ -138,17 +138,17 @@ client.on('message', (message) => {
 
     const isRead = (id) => readMe === false ? id !== client.user.id : readMe;
 
-    const url_delete = (str) => {
+    const urlDelete = (str) => {
         const pat = /(https?:\/\/[\x21-\x7e]+)/g;
         return str.replace(pat, ' URL省略。');
     };
 
-    const emoji_delete = (str) => {
+    const emojiDelete = (str) => {
         const pat = /(<:\w*:\d*>)/g;
         return str.replace(pat, '');
     };
 
-    const mention_replace = (str) => {
+    const mentionReplace = (str) => {
         const pat = /<@!(\d*)>/g;
         const [matchAllElement] = str.matchAll(pat);
         if (matchAllElement === undefined) return str;
@@ -161,10 +161,10 @@ client.on('message', (message) => {
             const emitter = new EventEmitter(); //イベント用意
             const readFunction = () => {//読み上げ機能
                 obj.msg = sepMessage.shift(); //queue処理
-                mode_api(obj).then((buffer) => {
+                modeApi(obj).then((buffer) => {
                     const desp = obj.cons.play(bufferToStream(buffer)); //保存されたWAV再生
-                    desp.on('finish',() => {
-                        if(sepMessage.length > 0) emitter.emit('read'); //読み上げにまだ残りあるならイベント発火
+                    desp.on('finish', () => {
+                        if (sepMessage.length > 0) emitter.emit('read'); //読み上げにまだ残りあるならイベント発火
                     });
                     console.log(`${obj.msg}の読み上げ完了`);
                 }).catch((error) => {
@@ -173,16 +173,21 @@ client.on('message', (message) => {
                     message.channel.send(`${modeList1[mode]}の呼び出しにエラーが発生しました。\nエラー内容:${error.details[0].message}`, {code: true});
                 });
             };
-            emitter.on('read',() => readFunction()); //イベント受信で読み上げ実行
+            emitter.on('read', () => readFunction()); //イベント受信で読み上げ実行
             readFunction();//最初の読み上げ
         } else {
             console.log('Botがボイスチャンネルへ接続してません。');
         }
     };
 
-    const mode_api = (obj) => {
+    const modeApi = (obj) => {
         if (mode === 1) {
-            return voiceText.fetchBuffer(obj.msg, {format: 'wav', speaker: userVoiceType[obj.memberId] != null ? userVoiceType[obj.memberId] : voicePattern1, pitch, speed});
+            return voiceText.fetchBuffer(obj.msg, {
+                format: 'wav',
+                speaker: userVoiceType[obj.memberId] != null ? userVoiceType[obj.memberId] : voicePattern1,
+                pitch,
+                speed
+            });
         } else {
             throw Error(`不明なAPIが選択されています:${mode}`);
         }
@@ -202,9 +207,9 @@ client.on('message', (message) => {
                     textChannelHistory = message.channel.id;
                     console.log('ボイスチャンネルへ接続しました。');
                     message.channel.send('ボイスチャンネルへ接続しました。', {code: true});
-                    message.reply(`\nチャットの読み上げ準備ができました。切断時は${prefix}killです。\n${ 
-                        prefix}mode で読み上げAPIを変更できます。\n ${prefix 
-                        }voiceでよみあげ音声を選択できます。\n 音声が読み上げられない場合は${prefix}reconnectを試してみてください。`);
+                    message.reply(`\nチャットの読み上げ準備ができました。切断時は${prefix}killです。\n${
+                        prefix}mode で読み上げAPIを変更できます。\n ${prefix
+                    }voiceでよみあげ音声を選択できます。\n 音声が読み上げられない場合は${prefix}reconnectを試してみてください。`);
                 }
             } else {
                 message.reply('既にボイスチャンネルへ接続済みです。');
@@ -335,10 +340,10 @@ client.on('message', (message) => {
     }
 
     if (!(isBot() || isBlackListsFromID(message.member.id) || isBlackListsFromPrefixes(message.content)) && isRead(message.member.id)) {
-        if (message.channel.id === textChannelHistory || allTextChannelRead){
+        if (message.channel.id === textChannelHistory || allTextChannelRead) {
             try {
                 yomiage({
-                    msg: mention_replace(emoji_delete(url_delete(`${message.content}。`))),
+                    msg: mentionReplace(emojiDelete(urlDelete(`${message.content}。`))),
                     cons: context,
                     memberId: message.member.id
                 });
@@ -346,7 +351,7 @@ client.on('message', (message) => {
                 console.log(error.message);
                 message.channel.send(error.message, {code: true});
             }
-        }else{
+        } else {
             console.log('Join,Reconnectコマンドが実行されたテキストチャンネル以外です');
         }
     } else {
