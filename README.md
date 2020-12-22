@@ -28,6 +28,7 @@ configフォルダ内のdefault.jsonがコンフィグファイルです。
   "Prefix": "/",
   "AutoRestart": true,
   "ReadMe": false,
+  "AllTextChannelRead": false,
   "Defalut": {
     "apiType": 1,
     "voiceType": "hikari"
@@ -52,6 +53,8 @@ configフォルダ内のdefault.jsonがコンフィグファイルです。
 | Prefix  |  コマンドの接頭語を決めます |
 | AutoRestart  |  予期せぬエラー時に自動でボイスチャンネルへ再接続すかどうか |
 | ReadMe  |  このBotが送るメッセージを読み上げるかどうか |
+| AllTextChannelRead  |  すべてのテキストチャンネルを読み上げるかどうか |
+|  |  　※falseの場合、join・reconnectコマンドを実行したテキストチャンネルのみ読み上げます |
 | apiType  |  デフォルトのAPIを指定 (利用できるAPIが1になってしまったので無意味)|
 | voiceType  |  デフォルトのボイスを指定 |
 | memberIds  |  読み上げから除外するユーザーのユーザーID |
