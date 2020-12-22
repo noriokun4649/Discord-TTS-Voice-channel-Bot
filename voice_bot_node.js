@@ -200,6 +200,19 @@ client.on('message', (message) => {
         return stream;
     };
 
+    const changeParameter = (mess, text, para) => {
+        const split = mess.split(' ');
+        if (mode === 1) {
+            if (1 < split.length && split[1] <= 200 && split[1] >= 50) {
+                message.channel.send(`読み上げ音声の${text}を${split[1]}に変更しました。`, {code: true});
+                return Number(split[1]);
+            } else {
+                message.reply(`読み上げ音声の${text}は 50 ～ 200 の範囲内で設定してください`);
+                return para;
+            }
+        }
+    };
+
     if (message.content === `${prefix}join`) {
         if (message.member.voice.channel) {
             if (!context || (context && context.status === 4)) {
@@ -312,31 +325,11 @@ client.on('message', (message) => {
     }
 
     if (message.content.indexOf(`${prefix}pitch`) === 0) {
-        const split = message.content.split(' ');
-        if (mode === 1) {
-            if (1 < split.length) {
-                if (split[1] <= 200 && split[1] >= 50) {
-                    pitch = Number(split[1]);
-                    message.channel.send(`読み上げ音声の高さを${split[1]}に変更しました。`, {code: true});
-                } else {
-                    message.reply('読み上げ音声の高さは 50 ～ 200 の範囲内で設定してください。');
-                }
-            }
-        }
+        pitch = changeParameter(message.content,'高さ', pitch);
     }
 
     if (message.content.indexOf(`${prefix}speed`) === 0) {
-        const split = message.content.split(' ');
-        if (mode === 1) {
-            if (1 < split.length) {
-                if (split[1] <= 200 && split[1] >= 50) {
-                    speed = Number(split[1]);
-                    message.channel.send(`読み上げ音声の速度を${split[1]}に変更しました。`, {code: true});
-                } else {
-                    message.reply('読み上げ音声の速度は 50 ～ 200 の範囲内で設定してください');
-                }
-            }
-        }
+        speed = changeParameter(message.content,'速度', speed);
     }
 
     if (!(isBot() || isBlackListsFromID(message.member.id) || isBlackListsFromPrefixes(message.content)) && isRead(message.member.id)) {
