@@ -2,7 +2,7 @@
   "name": "discord-tts-voice-channel-bot",
   "description": "voice channel bot",
   "license": "MIT",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "voice_bot_node.js",
   "scripts": {
     "start": "node voice_bot_node.js"
