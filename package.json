@@ -5,7 +5,8 @@
   "version": "1.0.1",
   "main": "voice_bot_node.js",
   "scripts": {
-    "start": "node voice_bot_node.js"
+    "start": "node voice_bot_node.js",
+    "test": "eslint *.js"
   },
   "repository": {
     "type": "git",
