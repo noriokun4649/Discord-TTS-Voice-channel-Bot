@@ -29,7 +29,7 @@ configフォルダ内のdefault.jsonがコンフィグファイルです。
   "AutoRestart": true,
   "ReadMe": false,
   "AllTextChannelRead": false,
-  "Defalut": {
+  "Default": {
     "apiType": 1,
     "voiceType": "hikari"
   },

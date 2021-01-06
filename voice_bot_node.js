@@ -44,9 +44,9 @@ const readConfig = () => {
     if (typeof readMe !== 'boolean') throw new Error('Require a boolean type.');
     allTextChannelRead = config.get('AllTextChannelRead');
     if (typeof readMe !== 'boolean') throw new Error('Require a boolean type.');
-    apiType = config.get('Defalut.apiType');
+    apiType = config.get('Default.apiType');
     if (!modeList1[apiType]) throw new Error('Unknown api.');
-    voiceType = config.get('Defalut.voiceType');
+    voiceType = config.get('Default.voiceType');
     if (!voiceLists1[voiceType]) throw new Error('Unknown voice.');
     blackList = config.get('BlackLists');
     return true;
