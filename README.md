@@ -1,4 +1,6 @@
 # Discord-TTS-Voice-channel-Bot
+![GitHub package.json dependency version (prod)](https://img.shields.io/github/package-json/dependency-version/noriokun4649/Discord-TTS-Voice-channel-Bot/@discordjs/opus) ![GitHub package.json dependency version (prod)](https://img.shields.io/github/package-json/dependency-version/noriokun4649/Discord-TTS-Voice-channel-Bot/config) ![GitHub package.json dependency version (prod)](https://img.shields.io/github/package-json/dependency-version/noriokun4649/Discord-TTS-Voice-channel-Bot/config-reloadable) ![GitHub package.json dependency version (prod)](https://img.shields.io/github/package-json/dependency-version/noriokun4649/Discord-TTS-Voice-channel-Bot/discord.js) ![GitHub package.json dependency version (prod)](https://img.shields.io/github/package-json/dependency-version/noriokun4649/Discord-TTS-Voice-channel-Bot/ffmpeg-static) ![GitHub package.json dependency version (prod)](https://img.shields.io/github/package-json/dependency-version/noriokun4649/Discord-TTS-Voice-channel-Bot/voice-text)  
+![GitHub](https://img.shields.io/github/license/noriokun4649/Discord-TTS-Voice-channel-Bot)  
 Discordでテキストチャンネルのチャットをボイスチャンネルで読み上げしてくれるBotです。  
 [5e1d411](https://github.com/noriokun4649/Discord-TTS-Voice-channel-Bot/commit/5e1d4119eb6f0392218ee48a34d0abce73598dc7)コミット以降では、HOYA VoiceTextAPIの上限だった200文字以上の読み上げに対応してます。
 
