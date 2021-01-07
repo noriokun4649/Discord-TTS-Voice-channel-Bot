@@ -4,6 +4,12 @@
 Discordでテキストチャンネルのチャットをボイスチャンネルで読み上げしてくれるBotです。  
 [5e1d411](https://github.com/noriokun4649/Discord-TTS-Voice-channel-Bot/commit/5e1d4119eb6f0392218ee48a34d0abce73598dc7)コミット以降では、HOYA VoiceTextAPIの上限だった200文字以上の読み上げに対応してます。
 
+# Docker版
+Docker版をGitHubのリポジトリにアップロードしたので下記コマンドで直接使えます。  
+```
+docker pull ghcr.io/noriokun4649/discord-tts-bot:1.0.0
+```
+
 # 必要なもの
 Node.js v12.19.0以降
 
