@@ -4,6 +4,7 @@ const {Readable} = require('stream');
 const conf = require('config-reloadable');
 const client = new Discord.Client();
 const EventEmitter = require('events');
+const GoogleTts = require('google-translate-tts');
 
 let config = conf();
 const voiceLists1 = {
@@ -15,7 +16,8 @@ const voiceLists1 = {
     show: 'ショウ（男性）'
 };
 const modeList1 = {
-    1: 'HOYA VoiceText API'
+    1: 'HOYA VoiceText API',
+    2: 'Google Translate'
 };
 let context;
 let discordToken = null;
@@ -188,7 +190,13 @@ client.on('message', (message) => {
                 pitch,
                 speed
             });
-        } else {
+        } else if (mode === 2) {
+            return GoogleTts.synthesize({
+                text: obj.msg,
+                voice: 'ja-JP'
+            });
+        } else
+            {
             throw Error(`不明なAPIが選択されています:${mode}`);
         }
     };
@@ -316,6 +324,8 @@ client.on('message', (message) => {
             } else {
                 message.reply(`読み上げ音声タイプを指定する必要があります。例：${prefix}voice hikari 指定可能な音声タイプは${prefix}typeで見ることが可能です。`);
             }
+        } else {
+            message.reply('このAPIでは音声タイプを変更出来ません。');
         }
     }
 
