@@ -55,7 +55,7 @@ configフォルダ内のdefault.jsonがコンフィグファイルです。
 | ReadMe  |  このBotが送るメッセージを読み上げるかどうか |
 | AllTextChannelRead  |  すべてのテキストチャンネルを読み上げるかどうか |
 |  |  ※falseの場合、join・reconnectコマンドを実行したテキストチャンネルのみ読み上げます |
-| apiType  |  デフォルトのAPIを指定 (利用できるAPIが1になってしまったので無意味)|
+| apiType  |  デフォルトのAPIを指定 |
 | voiceType  |  デフォルトのボイスを指定 |
 | memberIds  |  読み上げから除外するユーザーのユーザーID |
 | prefixes  |  読み上げから除外する接頭語  |
