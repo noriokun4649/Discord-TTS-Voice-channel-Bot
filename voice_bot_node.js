@@ -193,7 +193,7 @@ client.on('message', (message) => {
         } else if (mode === 2) {
             return GoogleTts.synthesize({
                 text: obj.msg,
-                voice: 'ja-JP'
+                voice: 'ja'
             });
         } else
             {
