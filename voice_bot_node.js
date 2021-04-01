@@ -23,7 +23,9 @@ let context;
 let discordToken = null;
 let voiceTextApiKey = null;
 let prefix = '/';
+let urlReplaceText = ' URL省略。';
 let autoRestart = true;
+let autoMessageRemove = false;
 let readMe = false;
 let allTextChannelRead = false;
 let apiType = 1;
@@ -40,8 +42,11 @@ const readConfig = () => {
     discordToken = config.get('Api.discordToken');
     voiceTextApiKey = config.get('Api.voiceTextApiKey');
     prefix = config.get('Prefix');
+    urlReplaceText = config.get('UrlReplaceText');
     autoRestart = config.get('AutoRestart');
     if (typeof autoRestart !== 'boolean') throw new Error('Require a boolean type.');
+    autoMessageRemove = config.get('AutoMessageRemove');
+    if (typeof autoMessageRemove !== 'boolean') throw new Error('Require a boolean type.');
     readMe = config.get('ReadMe');
     if (typeof readMe !== 'boolean') throw new Error('Require a boolean type.');
     allTextChannelRead = config.get('AllTextChannelRead');
@@ -142,7 +147,7 @@ client.on('message', (message) => {
 
     const urlDelete = (str) => {
         const pat = /(https?:\/\/[\x21-\x7e]+)/g;
-        return str.replace(pat, ' URL省略。');
+        return str.replace(pat, urlReplaceText);
     };
 
     const emojiDelete = (str) => {
@@ -157,23 +162,40 @@ client.on('message', (message) => {
         return str.replace(pat, client.users.resolve(matchAllElement[1]).username);
     };
 
+    const messageAutoRemove = (obj) => {
+        if (autoMessageRemove && obj.msg !== urlReplaceText){
+            obj.msgId != null ?
+                message.channel.messages.fetch(obj.msgId).then((res) =>
+                    res.delete({ reason: '読み上げ後自動削除機能により削除' }))
+                    .catch((error) => console.log(`エラーにより自動削除出来ませんでした。\n
+                    Botにメッセージ管理のロールが与えられてるか確認してみてください。\n\n${error}`)) :
+                console.log('読み上げたメッセージを特定出来なかったため自動削除出来ません');
+        }
+    };
+
     const yomiage = (obj) => {
         if (obj.cons && obj.cons.status === 0 && (message.guild.id === context.channel.guild.id)) {
             const sepMessage = obj.msg.match(/.{1,200}/g); //200以上の場合分割
             const emitter = new EventEmitter(); //イベント用意
             const readFunction = () => {//読み上げ機能
-                obj.msg = sepMessage.shift(); //queue処理
-                modeApi(obj).then((buffer) => {
-                    const desp = obj.cons.play(bufferToStream(buffer)); //保存されたWAV再生
-                    desp.on('finish', () => {
-                        if (sepMessage.length > 0) emitter.emit('read'); //読み上げにまだ残りあるならイベント発火
+                if (sepMessage !== null){
+                    sepMessage.shift(); //queue処理
+                    modeApi(obj).then((buffer) => {
+                        const desp = obj.cons.play(bufferToStream(buffer)); //保存されたWAV再生
+                        desp.on('finish', () => {
+                            if (sepMessage.length > 0) {
+                                emitter.emit('read'); //読み上げにまだ残りあるならイベント発火
+                            } else {
+                                messageAutoRemove(obj);
+                            }
+                        });
+                        console.log(`${obj.msg}の読み上げ完了`);
+                    }).catch((error) => {
+                        console.log('error ->');
+                        console.error(error);
+                        message.channel.send(`${modeList1[mode]}の呼び出しにエラーが発生しました。\nエラー内容:${error.details[0].message}`, {code: true});
                     });
-                    console.log(`${obj.msg}の読み上げ完了`);
-                }).catch((error) => {
-                    console.log('error ->');
-                    console.error(error);
-                    message.channel.send(`${modeList1[mode]}の呼び出しにエラーが発生しました。\nエラー内容:${error.details[0].message}`, {code: true});
-                });
+                }
             };
             emitter.on('read', () => readFunction()); //イベント受信で読み上げ実行
             readFunction();//最初の読み上げ
@@ -346,9 +368,10 @@ client.on('message', (message) => {
         if (message.channel.id === textChannelHistory || allTextChannelRead) {
             try {
                 yomiage({
-                    msg: mentionReplace(emojiDelete(urlDelete(`${message.content}。`))),
+                    msg: mentionReplace(emojiDelete(urlDelete(message.content))),
                     cons: context,
-                    memberId: message.member.id
+                    memberId: message.member.id,
+                    msgId: message.id
                 });
             } catch (error) {
                 console.log(error.message);
