@@ -7,6 +7,8 @@
   "AutoRestart": true,
   "ReadMe": false,
   "AllTextChannelRead": false,
+  "AutoMessageRemove": true,
+  "UrlReplaceText": "URL省略",
   "Default": {
     "apiType": 1,
     "voiceType": "hikari"
