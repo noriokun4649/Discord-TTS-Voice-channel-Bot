@@ -23,7 +23,7 @@ let context;
 let discordToken = null;
 let voiceTextApiKey = null;
 let prefix = '/';
-let urlReplaceText = ' URL省略。';
+let urlReplaceText = 'URL省略';
 let autoRestart = true;
 let autoMessageRemove = false;
 let readMe = false;

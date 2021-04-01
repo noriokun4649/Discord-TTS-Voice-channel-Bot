@@ -7,7 +7,7 @@
   "AutoRestart": true,
   "ReadMe": false,
   "AllTextChannelRead": false,
-  "AutoMessageRemove": true,
+  "AutoMessageRemove": false,
   "UrlReplaceText": "URL省略",
   "Default": {
     "apiType": 1,
