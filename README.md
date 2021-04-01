@@ -37,6 +37,8 @@ configフォルダ内のdefault.jsonがコンフィグファイルです。
   "AutoRestart": true,
   "ReadMe": false,
   "AllTextChannelRead": false,
+  "AutoMessageRemove": false,
+  "UrlReplaceText": "URL省略",
   "Default": {
     "apiType": 1,
     "voiceType": "hikari"
@@ -63,6 +65,8 @@ configフォルダ内のdefault.jsonがコンフィグファイルです。
 | ReadMe  |  このBotが送るメッセージを読み上げるかどうか |
 | AllTextChannelRead  |  すべてのテキストチャンネルを読み上げるかどうか |
 |  |  ※falseの場合、join・reconnectコマンドを実行したテキストチャンネルのみ読み上げます |
+| AutoMessageRemove  |  読み上げたメッセージを自動削除するかどうか |
+| UrlReplaceText  |  URL読み上げ時に使われる読み上げテキスト |
 | apiType  |  デフォルトのAPIを指定 |
 | voiceType  |  デフォルトのボイスを指定 |
 | memberIds  |  読み上げから除外するユーザーのユーザーID |
