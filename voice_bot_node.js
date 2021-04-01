@@ -163,10 +163,10 @@ client.on('message', (message) => {
     };
 
     const messageAutoRemove = (obj) => {
-        if (autoMessageRemove && obj.msg !== urlReplaceText){
+        if (autoMessageRemove && obj.msg !== urlReplaceText) {
             obj.msgId != null ?
                 message.channel.messages.fetch(obj.msgId).then((res) =>
-                    res.delete({ reason: '読み上げ後自動削除機能により削除' }))
+                    res.delete({reason: '読み上げ後自動削除機能により削除'}))
                     .catch((error) => console.log(`エラーにより自動削除出来ませんでした。\n
                     Botにメッセージ管理のロールが与えられてるか確認してみてください。\n\n${error}`)) :
                 console.log('読み上げたメッセージを特定出来なかったため自動削除出来ません');
@@ -178,7 +178,7 @@ client.on('message', (message) => {
             const sepMessage = obj.msg.match(/.{1,200}/g); //200以上の場合分割
             const emitter = new EventEmitter(); //イベント用意
             const readFunction = () => {//読み上げ機能
-                if (sepMessage !== null){
+                if (sepMessage !== null) {
                     sepMessage.shift(); //queue処理
                     modeApi(obj).then((buffer) => {
                         const desp = obj.cons.play(bufferToStream(buffer)); //保存されたWAV再生
@@ -217,8 +217,7 @@ client.on('message', (message) => {
                 text: obj.msg,
                 voice: 'ja'
             });
-        } else
-            {
+        } else {
             throw Error(`不明なAPIが選択されています:${mode}`);
         }
     };
@@ -357,11 +356,11 @@ client.on('message', (message) => {
     }
 
     if (message.content.indexOf(`${prefix}pitch`) === 0) {
-        pitch = changeParameter(message.content,'高さ', pitch);
+        pitch = changeParameter(message.content, '高さ', pitch);
     }
 
     if (message.content.indexOf(`${prefix}speed`) === 0) {
-        speed = changeParameter(message.content,'速度', speed);
+        speed = changeParameter(message.content, '速度', speed);
     }
 
     if (!(isBot() || isBlackListsFromID(message.member.id) || isBlackListsFromPrefixes(message.content)) && isRead(message.member.id)) {
