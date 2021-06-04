@@ -162,11 +162,11 @@ client.on('message', (message) => {
         return str.replace(pat, client.users.resolve(matchAllElement[1]).username);
     };
 
-    const roleReplace = (str,guildid) => {
+    const roleReplace = (str, guildid) => {
         const pat = /<@&(\d*)>/g;
         const [matchAllElement] = str.matchAll(pat);
         if (matchAllElement === undefined) return str;
-        return str.replace(pat, client.guilds.resolve(guildid).roles.resolve(matchAllElement[1]).name)
+        return str.replace(pat, client.guilds.resolve(guildid).roles.resolve(matchAllElement[1]).name);
     };
 
     const messageAutoRemove = (obj) => {
