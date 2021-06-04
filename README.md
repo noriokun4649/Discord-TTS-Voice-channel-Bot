@@ -7,7 +7,7 @@ Discordでテキストチャンネルのチャットをボイスチャンネル�
 # Docker版
 Docker版をGitHubのリポジトリにアップロードしたので下記コマンドで直接使えます。  
 ```
-docker pull ghcr.io/noriokun4649/discord-tts-bot:1.0.1
+docker pull ghcr.io/noriokun4649/discord-tts-bot
 ```
 
 # 必要なもの
