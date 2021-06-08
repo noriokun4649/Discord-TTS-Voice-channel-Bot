@@ -16,7 +16,7 @@
     "node": ">=12.20.0"
   },
   "dependencies": {
-    "@discordjs/opus": "^0.3.3",
+    "@discordjs/opus": "^0.5.0",
     "config": "^3.3.2",
     "config-reloadable": "^1.0.8",
     "discord.js": "^12.4.0",
