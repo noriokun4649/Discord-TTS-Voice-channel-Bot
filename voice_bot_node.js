@@ -182,7 +182,7 @@ client.on('message', (message) => {
             const emitter = new EventEmitter(); //イベント用意
             const readFunction = () => {//読み上げ機能
                 if (sepMessage !== null) {
-                    sepMessage.shift(); //queue処理
+                    obj.msg = sepMessage.shift(); //queue処理
                     modeApi(obj).then((buffer) => {
                         const desp = obj.cons.play(bufferToStream(buffer)); //保存されたWAV再生
                         desp.on('finish', () => {
